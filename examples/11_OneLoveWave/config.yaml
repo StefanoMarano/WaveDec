@@ -1,0 +1,19 @@
+################################
+## Input and output options
+################################
+INPUT: OneLove.yaml     # Folder containing input SAC files. Default is current folder <.>
+OUTPUT: .               # Folder where output files will be saved. Default is current folder <.>
+
+################################
+## Processing options
+################################
+Twindow: 5     # Duration, of the analysis window, in seconds. Default is <30>
+MaxWindows: 1  # Maximum number of time windows to be analyzed. Set <0> for largest possible. Default is <0>
+Fmin: 6        # Smallest frequency to analyze, in Hertz. Default is <1/Twindow>
+Fmax: 6        # Largest frequency to analyze, in Hertz. Default is <0.5/Ts>
+Fnum: 1       # Number of frequencies, between Fmin and Fmax, to be analyzed. Default is <50>
+
+MaxWaves: 5               # Number of waves to be modeled for each time window at a given frequency. Default is <1>
+ModelRayleighWaves: true  # Boolean indicating whether to model or not Rayleigh waves. Default is <true>
+ModelLoveWaves: true      # Boolean indicating whether to model or not Love waves. Default is <true>
+ModelNoise: true          # Boolean indicating whether to allow or not a window without Rayleigh and Love waves. Default is <true>

@@ -1,0 +1,55 @@
+# Synthetic wavefield for the one Love and one Rayleigh waves experiment
+# The waves are shifted of 90 degrees to maximize the nasty interference
+# Rayleigh wave has no energy on the vertical component
+# Love wave amplitude is a tenth of Rayleigh wave amplitude
+
+SamplingInterval: 0.01
+NumberSamples: 500
+
+wavefield:
+- wave: rayleigh
+  amplitude: 1.0
+  phase: 0
+  wavenumber: 0.03
+  azimuth: 0.0
+  ellipticityangle: 1.57
+  frequency: 6
+- wave: love
+  amplitude: 0.1
+  phase: 1.047
+  wavenumber: 0.03
+  azimuth: 1.57
+  frequency: 6
+- wave: noise
+  sigma2: 0.03
+
+array:
+- position: [ 68.,  40.]
+  components: [EWX, NSY, UDZ]
+- position: [ 40.,  40.]
+  components: [EWX, NSY, UDZ]
+- position: [ 56.,  56.]
+  components: [EWX, NSY, UDZ]
+- position: [ 40.,  68.]
+  components: [EWX, NSY, UDZ]
+- position: [ 32.,  56.]
+  components: [EWX, NSY, UDZ]
+- position: [ 72.,  64.]
+  components: [EWX, NSY, UDZ]
+- position: [ 40.,  24.]
+  components: [EWX, NSY, UDZ]
+- position: [ 24.,  40.]
+  components: [EWX, NSY, UDZ]
+- position: [ 48.,  48.]
+  components: [EWX, NSY, UDZ]
+- position: [ 08.,  56.]
+  components: [EWX, NSY, UDZ]
+- position: [ 60.,  08.]
+  components: [EWX, NSY, UDZ]
+- position: [ 56.,  68.]
+  components: [EWX, NSY, UDZ]
+- position: [ 80.,  80.]
+  components: [EWX, NSY, UDZ]
+- position: [ 56.,  28.]
+  components: [EWX, NSY, UDZ]
+

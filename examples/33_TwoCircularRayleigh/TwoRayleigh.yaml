@@ -1,0 +1,51 @@
+# a first config file
+SamplingInterval: 0.01
+NumberSamples: 500
+
+wavefield:
+- wave: CircularRayleigh
+  amplitude: 1
+  phase: 2.5
+  wavenumber: 0.03
+  ellipticityangle: -1
+  frequency: 5
+  sourceposition: [10., 20.]
+- wave: CircularRayleigh
+  amplitude: 0.3
+  phase: 2.5
+  wavenumber: 0.015
+  ellipticityangle: 0.5
+  frequency: 5
+  sourceposition: [10., 20.]
+- wave: noise
+  sigma2: 0.0005
+
+array:
+- position: [ 68.,  40.]
+  components: [EWX, NSY, UDZ]
+- position: [ 40.,  40.]
+  components: [EWX, NSY, UDZ]
+- position: [ 56.,  56.]
+  components: [EWX, NSY, UDZ]
+- position: [ 40.,  68.]
+  components: [EWX, NSY, UDZ]
+- position: [ 32.,  56.]
+  components: [EWX, NSY, UDZ]
+- position: [ 72.,  64.]
+  components: [EWX, NSY, UDZ]
+- position: [ 40.,  24.]
+  components: [EWX, NSY, UDZ]
+- position: [ 24.,  40.]
+  components: [EWX, NSY, UDZ]
+- position: [ 48.,  48.]
+  components: [EWX, NSY, UDZ]
+- position: [ 08.,  56.]
+  components: [EWX, NSY, UDZ]
+- position: [ 60.,  08.]
+  components: [EWX, NSY, UDZ]
+- position: [ 56.,  68.]
+  components: [EWX, NSY, UDZ]
+- position: [ 80.,  80.]
+  components: [EWX, NSY, UDZ]
+- position: [ 56.,  28.]
+  components: [EWX, NSY, UDZ]

@@ -1,0 +1,20 @@
+INPUT: OneDissipativeCircularRayleigh.yaml
+OUTPUT: .
+
+SourcePosition : [10.,  20.]
+ShotDuration: 5
+ShotStarts: 0
+
+
+
+Fmin : 5
+Fmax : 5
+Fnum : 1
+KiStep : 0.005
+MaxWaves : 5
+
+ModelCircularVerticalWaves: false
+ModelCircularLoveWaves: false
+ModelCircularRayleighWaves: false
+ModelCircularDissipativeRayleighWaves: true
+ModelNoise: true

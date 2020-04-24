@@ -1,0 +1,19 @@
+INPUT: OneCircularRayleigh.yaml
+OUTPUT: .
+
+SourcePosition : [10.,  20.]
+ShotDuration: 5
+ShotStarts: 0
+
+
+
+Fmin : 5
+Fmax : 5
+Fnum : 1
+
+MaxWaves : 5
+
+ModelCircularVerticalWaves: false
+ModelCircularLoveWaves: false
+ModelCircularRayleighWaves: true
+ModelNoise: true

@@ -1,0 +1,30 @@
+################################
+## This is a configuration file to be used with WaveDecActive
+##
+
+################################
+## Input and output options
+################################
+
+INPUT: ./SAC_ZurichAirport_Active_Line02
+OUTPUT: Active_Line02
+
+################################
+## Processing options
+################################
+
+SourcePosition : [35,1]
+ShotDuration: 0.4999
+ShotStarts: [0, 0.499875000000000, 0.999750000000000, 1.49962500000000, 1.99950000000000, 2.49937500000000, 2.99925000000000, 3.49912500000000, 3.99900000000000, 4.49887500000000]
+
+ModelCircularRayleighWaves: true
+ModelNoise: true
+
+Fmin : 3
+Fmax : 130
+Fnum : 150
+Gamma : 0.5
+MaxWaves : 5
+Kmax : 1
+
+

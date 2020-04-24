@@ -1,0 +1,29 @@
+################################
+## This is an example configuration file to be used with WaveDec
+##
+
+################################
+## Input and output options
+################################
+
+INPUT: ./SAC_ZurichAirport_Active_Shot07
+OUTPUT: Active_Shot07
+
+################################
+## Processing options
+################################
+
+SourcePosition : [685133.401, 257542.114]
+ShotDuration: 0.8
+ShotStarts: [4.5, 7.0, 9.1, 11.5, 13.8, 16.1, 18.3, 20.4, 22.5, 24.6]
+
+ModelCircularVerticalWaves: false
+ModelCircularRayleighWaves: true
+ModelNoise: true
+
+Fmin : 0
+Fmax : 60
+Fnum : 91
+Gamma : 0.2
+MaxWaves : 5
+Kmax : 0.18

@@ -1,0 +1,45 @@
+# a first config file
+SamplingInterval: 0.01
+NumberSamples: 500
+
+wavefield:
+- wave: love
+  amplitude: 1
+  phase: 0
+  wavenumber: 0.02
+  azimuth: 0.7854
+  frequency: 6
+- wave: noise
+  sigma2: 0.0005
+
+array:
+- position: [ 68.,  40.]
+  components: [EWX, NSY, UDZ]
+- position: [ 40.,  40.]
+  components: [EWX, NSY, UDZ]
+- position: [ 56.,  56.]
+  components: [EWX, NSY, UDZ]
+- position: [ 40.,  68.]
+  components: [EWX, NSY, UDZ]
+- position: [ 32.,  56.]
+  components: [EWX, NSY, UDZ]
+- position: [ 72.,  64.]
+  components: [EWX, NSY, UDZ]
+- position: [ 40.,  24.]
+  components: [EWX, NSY, UDZ]
+- position: [ 24.,  40.]
+  components: [EWX, NSY, UDZ]
+- position: [ 48.,  48.]
+  components: [EWX, NSY, UDZ]
+- position: [ 08.,  56.]
+  components: [EWX, NSY, UDZ]
+- position: [ 60.,  08.]
+  components: [EWX, NSY, UDZ]
+- position: [ 56.,  68.]
+  components: [EWX, NSY, UDZ]
+- position: [ 80.,  80.]
+  components: [EWX, NSY, UDZ]
+- position: [ 56.,  28.]
+  components: [EWX, NSY, UDZ]
+
+

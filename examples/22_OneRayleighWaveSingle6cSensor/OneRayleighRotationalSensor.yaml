@@ -1,0 +1,18 @@
+# a first config file
+SamplingInterval: 0.01
+NumberSamples: 500
+
+wavefield:
+- wave: rayleigh
+  amplitude: 1
+  phase: 0
+  wavenumber: 0.02
+  azimuth: 0.7854
+  ellipticityangle: -0.7
+  frequency: 6
+- wave: noise
+  sigma2: 0.0005
+
+array:
+- position: [ 0.,  0.]
+  components: [EWX, NSY, UDZ, ROTX, ROTY, ROTZ]

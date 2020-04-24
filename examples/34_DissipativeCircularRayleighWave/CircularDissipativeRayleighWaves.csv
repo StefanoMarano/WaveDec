@@ -1,0 +1,5 @@
+# WaveDecActive output file for Circular Dissipative Rayleigh waves
+# MODEL_CIRCULAR_DISSIPATIVE_RAYLEIGH
+# Frequency	Amplitude	Wavenumber_r	Velocity	EllipticityAngle	Wavenumber_i	Alpha
+# [Hz]	[a.u.]	[1/m]	[m/s]	[rad]	[1/m]	[rad/m]
+5.000e+00	1.045e+00	2.008e-02	2.491e+02	-1.005e+00	-1.015e-02	6.378e-02

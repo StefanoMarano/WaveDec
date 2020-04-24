@@ -1,0 +1,6 @@
+# WaveDec output file for Rayleigh waves
+# MODEL_RAYLEIGH
+# Frequency	Amplitude	Wavenumber	Velocity	Azimuth	EllipticityAngle
+# [Hz]	[a.u.]	[1/m]	[m/s]	[rad]	[rad]
+6.000e+00	9.020e-01	3.002e-02	1.998e+02	7.853e-01	7.882e-01
+6.000e+00	7.018e-01	3.005e-02	1.997e+02	1.571e+00	7.826e-01

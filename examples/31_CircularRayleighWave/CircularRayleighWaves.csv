@@ -1,0 +1,5 @@
+# WaveDec output file for Circular Rayleigh waves
+# MODEL_CIRCULAR_RAYLEIGH
+# Frequency	Amplitude	Wavenumber	Velocity	EllipticityAngle
+# [Hz]	[a.u.]	[1/m]	[m/s]	[rad]
+5.000e+00	1.000e+00	2.001e-02	2.499e+02	-1.001e+00

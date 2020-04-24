@@ -1,0 +1,28 @@
+################################
+## Input and output options
+################################
+INPUT: SAC_Brigerbad     # Folder containing input SAC files. Default is current folder <.>
+OUTPUT: LoveAndRayleigh   # Folder where output files will be saved. Default is current folder <.>
+
+################################
+## Processing options
+################################
+Twindow: 30    # Duration, of the analysis window, in seconds. Default is <30>
+MaxWindows: 50 # Maximum number of time windows to be analyzed. Set <0> for largest possible. Default is <0>
+Fmin: 1      # Smallest frequency to analyze, in Hertz. Default is <1/Twindow>
+Fmax: 14       # Largest frequency to analyze, in Hertz. Default is <0.5/Ts>
+Fspacing: lin  # Linear <lin> or logarithmic <log> frequency spacing. Default is <lin>
+Fnum: 0       # Number of frequencies, between Fmin and Fmax, to be analyzed. Default is <50>
+Vmin: 150       # Smallest velocity considered in m/s. May speed up computation. Default is <0>
+
+MaxWaves: 1               # Number of waves to be modeled for each time window at a given frequency. Default is <1>
+ModelRayleighWaves: true  # Boolean indicating whether to model or not Rayleigh waves. Default is <true>
+ModelLoveWaves: true      # Boolean indicating whether to model or not Love waves. Default is <true>
+ModelNoise: true          # Boolean indicating whether to allow or not a window without Rayleigh and Love waves. Default is <true>
+
+################################
+## More processing options (less used)
+################################
+Kmax: 0.12                # The largest wavenumber to analyze, in 1/m. Default is inferred from array geometry.
+
+

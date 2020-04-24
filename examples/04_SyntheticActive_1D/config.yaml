@@ -1,0 +1,32 @@
+################################
+## This is an example configuration file to be used with WaveDecActive
+##
+
+################################
+## Input and output options
+################################
+
+INPUT: ./sac
+OUTPUT: Shot01
+
+################################
+## Processing options
+################################
+
+SourcePosition : [30,30]
+ShotDuration: 0.55
+ShotStarts: [0.45]
+
+ModelCircularVerticalWaves: false
+ModelCircularRayleighWaves: false
+ModelCircularDissipativeRayleighWaves: true
+ModelNoise: true
+
+Fmin : 0
+Fmax : 60
+Fnum : 61
+Gamma : 0.1
+MaxWaves : 5
+Kmax : 0.18
+
+

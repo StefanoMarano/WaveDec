@@ -1,0 +1,19 @@
+INPUT: OneCircularVertical.yaml
+OUTPUT: .
+
+SourcePosition : [10.,  20.]
+ShotDuration: 5
+ShotStarts: 0
+
+
+
+Fmin : 5
+Fmax : 5
+Fnum : 1
+
+MaxWaves : 5
+
+ModelCircularVerticalWaves: true
+ModelCircularLoveWaves: false
+ModelCircularRayleighWaves: false
+ModelNoise: true

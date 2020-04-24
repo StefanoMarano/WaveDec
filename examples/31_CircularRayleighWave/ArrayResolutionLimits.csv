@@ -1,0 +1,4 @@
+# WaveDec output file with array resolution limits
+# Frequency	Kmin	Kmax	Vmin	Vmax
+# [Hz]	[1/m]	[1/m]	[m/s]	[m/s]
+5.000e+00	7.377e-03	9.780e-01	5.112e+00	6.778e+02

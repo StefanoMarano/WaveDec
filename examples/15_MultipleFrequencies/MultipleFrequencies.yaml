@@ -1,0 +1,65 @@
+# Synthetic wavefield for the two Love and two Rayleigh waves experiment
+
+SamplingInterval: 0.01
+NumberSamples: 500
+
+wavefield:
+- wave: rayleigh
+  amplitude: 0.9
+  phase: 0
+  wavenumber: 0.03
+  azimuth: 0.785
+  ellipticityangle: 0.785
+  frequency: 5
+- wave: rayleigh
+  amplitude: 0.7
+  phase: 0.785
+  wavenumber: 0.03
+  azimuth: 1.571
+  ellipticityangle: 0.785
+  frequency: 6
+- wave: love
+  amplitude: 0.8
+  phase: 1.047
+  wavenumber: 0.04
+  azimuth: -0.785
+  frequency: 5
+- wave: love
+  amplitude: 0.2
+  phase: 3.142
+  wavenumber: 0.04
+  azimuth: 3.142
+  frequency: 6
+- wave: noise
+  sigma2: 0.03
+
+array:
+- position: [ 68.,  40.]
+  components: [EWX, NSY, UDZ]
+- position: [ 40.,  40.]
+  components: [EWX, NSY, UDZ]
+- position: [ 56.,  56.]
+  components: [EWX, NSY, UDZ]
+- position: [ 40.,  68.]
+  components: [EWX, NSY, UDZ]
+- position: [ 32.,  56.]
+  components: [EWX, NSY, UDZ]
+- position: [ 72.,  64.]
+  components: [EWX, NSY, UDZ]
+- position: [ 40.,  24.]
+  components: [EWX, NSY, UDZ]
+- position: [ 24.,  40.]
+  components: [EWX, NSY, UDZ]
+- position: [ 48.,  48.]
+  components: [EWX, NSY, UDZ]
+- position: [ 08.,  56.]
+  components: [EWX, NSY, UDZ]
+- position: [ 60.,  08.]
+  components: [EWX, NSY, UDZ]
+- position: [ 56.,  68.]
+  components: [EWX, NSY, UDZ]
+- position: [ 80.,  80.]
+  components: [EWX, NSY, UDZ]
+- position: [ 56.,  28.]
+  components: [EWX, NSY, UDZ]
+

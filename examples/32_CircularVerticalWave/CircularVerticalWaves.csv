@@ -1,0 +1,5 @@
+# WaveDec output file for circular vertical-component waves
+# MODEL_CIRCULAR_VERTICAL
+# Frequency	Amplitude	Wavenumber	Velocity
+# [Hz]	[a.u.]	[1/m]	[m/s]
+5.000e+00	9.994e-01	1.999e-02	2.501e+02

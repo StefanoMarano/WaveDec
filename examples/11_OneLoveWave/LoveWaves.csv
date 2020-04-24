@@ -1,0 +1,5 @@
+# WaveDec output file for Love waves
+# MODEL_LOVE
+# Frequency	Amplitude	Wavenumber	Velocity	Azimuth
+# [Hz]	[a.u.]	[1/m]	[m/s]	[rad]
+6.000e+00	1.000e+00	2.000e-02	3.000e+02	7.854e-01

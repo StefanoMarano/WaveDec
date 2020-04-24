@@ -1,0 +1,34 @@
+################################
+## This is an example configuration file to be used with WaveDec
+##
+
+################################
+## Input and output options
+################################
+INPUT: SAC_ZurichAirport_Passive_Array1     # Folder containing input SAC files. Default is current folder <.>
+OUTPUT: Passive_Array1   # Folder where output files will be saved. Default is current folder <.>
+
+################################
+## Processing options
+################################
+Twindow: 40    # Duration, of the analysis window, in seconds. Default is <25>
+MaxWindows: 0 # Maximum number of time windows to be analyzed. Set <0> for largest possible. Default is <0>
+Fmin: 2      # Smallest frequency to analyze, in Hertz. Default is <10/Twindow>
+Fmax: 25       # Largest frequency to analyze, in Hertz. Default is <min(20, 0.5/Ts)>
+Fspacing: lin  # Linear <lin> or logarithmic <log> frequency spacing. Default is <lin>
+Fnum: 100      # Number of frequencies, between Fmin and Fmax, to be analyzed. Default is <50>
+Vmin: 150       # Smallest velocity considered in m/s. May speed up computation. Default is <50>
+
+MaxWaves: 3               # Number of waves to be modeled for each time window at a given frequency. Default is <1>
+ModelRayleighWaves: true  # Boolean indicating whether to model or not Rayleigh waves. Default is <true>
+ModelLoveWaves: true      # Boolean indicating whether to model or not Love waves. Default is <true>
+ModelNoise: true          # Boolean indicating whether to allow or not a window without Rayleigh and Love waves. Default is <true>
+
+################################
+## More processing options (less used)
+################################
+Kmax: 0.1                # The largest wavenumber to analyze, in 1/m. Default is inferred from array geometry.
+# Ts: 0.01                  # Sampling time in seconds. This option will override what is found in the SAC headers.
+# ModelVerticalWaves: false # Boolean indicating whether to model or not Vertical-component-only waves. Default is <false>
+                            # If ModelVerticalWaves = true, it will be forced ModelRayleighWaves = ModelLoveWaves = false
+# MaxIterations: 5          # The maximum number of iterations for iterative wave estimation. Default is <10>

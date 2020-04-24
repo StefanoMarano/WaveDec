@@ -1,0 +1,5 @@
+# WaveDec output file for vertical-component waves
+# MODEL_VERTICAL
+# Frequency	Amplitude	Wavenumber	Velocity	Azimuth
+# [Hz]	[a.u.]	[1/m]	[m/s]	[rad]
+6.000e+00	9.995e-01	2.000e-02	3.000e+02	7.995e-05
