@@ -1,0 +1,433 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>SyntheticWavefield &mdash; WaveDec  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="WaveDec  documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+<li><a href="http://mercalli.ethz.ch/~marra/">Home</a> &raquo; <a href="../index.html">WaveDec  documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for SyntheticWavefield</h1><div class="highlight"><pre>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">##################################################</span>
+<span class="c1"># © 2017 ETH Zurich, Swiss Seismological Service #</span>
+<span class="c1"># Stefano Marano&#39; - wavedec at gmail dot com     #</span>
+<span class="c1">##################################################</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Routines for generating syntetic wavefield</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">size</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">vstack</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">random</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">power</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="nb">abs</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">hankel2</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">wdSettings</span> <span class="kn">import</span> <span class="n">EWX</span><span class="p">,</span> <span class="n">NSY</span><span class="p">,</span> <span class="n">UDZ</span><span class="p">,</span> <span class="n">ROTX</span><span class="p">,</span> <span class="n">ROTY</span><span class="p">,</span> <span class="n">ROTZ</span><span class="p">,</span> <span class="n">Components</span>
+
+
+
+<span class="k">def</span> <span class="nf">readSyntheticWavefield</span><span class="p">(</span><span class="n">config_file</span><span class="p">):</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">conf</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;Error: No configuration file &quot;{0}&quot; found.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_file</span><span class="p">))</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Generating synthetic wavefield&#39;</span><span class="p">)</span>
+    
+    <span class="n">K</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;NumberSamples&#39;</span><span class="p">)</span>
+    <span class="n">Ts</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SamplingInterval&#39;</span><span class="p">)</span>
+    <span class="n">array_info</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;array&#39;</span><span class="p">)</span>
+    <span class="n">info</span><span class="o">=</span><span class="n">array</span><span class="p">([])</span>
+    
+    <span class="k">for</span> <span class="n">aa</span> <span class="ow">in</span> <span class="n">array_info</span><span class="p">:</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="n">aa</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;position&#39;</span><span class="p">)</span>
+        <span class="n">components</span> <span class="o">=</span> <span class="n">aa</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;components&#39;</span><span class="p">)</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="n">size</span><span class="p">(</span><span class="n">components</span><span class="p">)</span>
+        <span class="n">info_aa</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="n">C</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">cc</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">C</span><span class="p">):</span>
+            <span class="n">info_aa</span><span class="p">[</span><span class="n">cc</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">info_aa</span><span class="p">[</span><span class="n">cc</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">info_aa</span><span class="p">[</span><span class="n">cc</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">info_aa</span><span class="p">[</span><span class="n">cc</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">Components</span><span class="p">[</span><span class="n">components</span><span class="p">[</span><span class="n">cc</span><span class="p">]]</span>
+            <span class="n">info_aa</span><span class="p">[</span><span class="n">cc</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">Ts</span>
+        <span class="k">if</span> <span class="n">size</span><span class="p">(</span><span class="n">info</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="n">info_aa</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="n">vstack</span><span class="p">((</span><span class="n">info</span><span class="p">,</span><span class="n">info_aa</span><span class="p">))</span>
+    <span class="n">L</span><span class="o">=</span><span class="n">shape</span><span class="p">(</span><span class="n">info</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">x</span><span class="o">=</span><span class="n">zeros</span><span class="p">((</span><span class="n">K</span><span class="p">,</span><span class="n">L</span><span class="p">))</span>
+    
+    <span class="n">wavefield</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;wavefield&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ww</span> <span class="ow">in</span> <span class="n">wavefield</span><span class="p">:</span>
+        <span class="n">wave_type</span> <span class="o">=</span> <span class="n">ww</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;wave&#39;</span><span class="p">)</span>
+        <span class="n">Amplitude</span> <span class="o">=</span> <span class="n">ww</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;amplitude&#39;</span><span class="p">)</span>
+        <span class="n">Phase</span> <span class="o">=</span> <span class="n">ww</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;phase&#39;</span><span class="p">)</span>
+        <span class="n">Wavenumber</span> <span class="o">=</span> <span class="n">ww</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;wavenumber&#39;</span><span class="p">)</span>
+        <span class="n">Azimuth</span> <span class="o">=</span> <span class="n">ww</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;azimuth&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="n">SourcePosition</span> <span class="o">=</span> <span class="n">ww</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sourceposition&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="n">EllipticityAngle</span> <span class="o">=</span> <span class="n">ww</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ellipticityangle&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="n">Frequency</span> <span class="o">=</span> <span class="n">ww</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;frequency&#39;</span><span class="p">)</span>
+        <span class="n">sigma2</span> <span class="o">=</span> <span class="n">ww</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sigma2&#39;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">wave_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;rayleigh&#39;</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Rayleigh wave&#39;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">Amplitude: {0:.3f}, Wavenumber: {1:.3f}, Azimuth: {2:.3f}, EllipticityAngle {3:.2f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Amplitude</span><span class="p">,</span><span class="n">Wavenumber</span><span class="p">,</span> <span class="n">Azimuth</span><span class="p">,</span> <span class="n">EllipticityAngle</span><span class="p">))</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">Frequency: {0:.3f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Frequency</span><span class="p">))</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">syntheticRayleighWave</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">Amplitude</span><span class="p">,</span> <span class="n">Phase</span><span class="p">,</span> <span class="n">Wavenumber</span><span class="p">,</span> <span class="n">Azimuth</span><span class="p">,</span> <span class="n">EllipticityAngle</span><span class="p">,</span> <span class="n">Frequency</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">wave_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;circularrayleigh&#39;</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Circular Rayleigh wave&#39;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">Amplitude: {0:.3f}, Wavenumber: {1:.3f}, EllipticityAngle {2:.2f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Amplitude</span><span class="p">,</span> <span class="n">Wavenumber</span><span class="p">,</span> <span class="n">EllipticityAngle</span><span class="p">))</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">Source Position: ({0:.3f}, {1:.3f})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">SourcePosition</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">SourcePosition</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">Frequency: {0:.3f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Frequency</span><span class="p">))</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">syntheticCircularRayleighWave</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">Amplitude</span><span class="p">,</span> <span class="n">Phase</span><span class="p">,</span> <span class="n">Wavenumber</span><span class="p">,</span> <span class="n">EllipticityAngle</span><span class="p">,</span> <span class="n">Frequency</span><span class="p">,</span> <span class="n">SourcePosition</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">wave_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;love&#39;</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Love wave&#39;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">Amplitude: {0:.3f}, Wavenumber: {1:.3f}, Azimuth: {2:.3f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Amplitude</span><span class="p">,</span><span class="n">Wavenumber</span><span class="p">,</span> <span class="n">Azimuth</span><span class="p">))</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">Frequency: {0:.3f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Frequency</span><span class="p">))</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">syntheticLoveWave</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">Amplitude</span><span class="p">,</span> <span class="n">Phase</span><span class="p">,</span> <span class="n">Wavenumber</span><span class="p">,</span> <span class="n">Azimuth</span><span class="p">,</span> <span class="n">Frequency</span><span class="p">)</span>
+        <span class="c1">#elif wave_type.lower() == &#39;circularlove&#39;:</span>
+        <span class="c1">#    logging.debug(&#39;\tCircular Love wave&#39;)</span>
+        <span class="c1">#    logging.debug(&#39;\t\tAmplitude: {0:.3f}, Wavenumber: {1:.3f}&#39;.format(Amplitude,Wavenumber))</span>
+        <span class="c1">#    logging.debug(&#39;\t\tFrequency: {0:.3f}&#39;.format(Frequency))</span>
+        <span class="c1">#    x = x + syntheticCircularLoveWave(Ts, K, info, Amplitude, Phase, Wavenumber, Frequency, SourcePosition)</span>
+        <span class="k">elif</span> <span class="n">wave_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;noise&#39;</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Additive Gaussian noise&#39;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">Sigma2: {0:.3e}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sigma2</span><span class="p">))</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">syntheticAWGN</span><span class="p">(</span><span class="n">sigma2</span><span class="p">,</span> <span class="n">zeros</span><span class="p">((</span><span class="n">K</span><span class="p">,</span><span class="n">L</span><span class="p">)))</span>
+            
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Warning: unrecognized wave &#39;{0}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">wave_type</span><span class="p">))</span>
+        
+    <span class="c1"># compute LL under H0 and H1</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">z</span><span class="p">;</span>
+    <span class="n">LL_H0</span> <span class="o">=</span> <span class="n">logLikelihoodIID</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">zeros</span><span class="p">((</span><span class="n">K</span><span class="p">,</span><span class="n">L</span><span class="p">)),</span> <span class="n">sigma2</span><span class="p">)</span>
+    <span class="n">LL_H1</span> <span class="o">=</span> <span class="n">logLikelihoodIID</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">)</span>
+    
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Theoretical log-likelihood values&#39;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">H0: {0:.3e} (no signal present)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">LL_H0</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">H1: {0:.3e} (signal present)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">LL_H1</span><span class="p">))</span>
+	
+	
+	
+    <span class="k">return</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">Ts</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="syntheticRayleighWave"><a class="viewcode-back" href="../code.html#SyntheticWavefield.syntheticRayleighWave">[docs]</a><span class="k">def</span> <span class="nf">syntheticRayleighWave</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">Amplitude</span><span class="p">,</span> <span class="n">Phase</span><span class="p">,</span> <span class="n">Wavenumber</span><span class="p">,</span> <span class="n">Azimuth</span><span class="p">,</span> <span class="n">EllipticityAngle</span><span class="p">,</span> <span class="n">Frequency</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generate a monochromatic Rayleigh wave.</span>
+<span class="sd"> </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Ts : float</span>
+<span class="sd">        The sampling time in [s]</span>
+<span class="sd">    K : int</span>
+<span class="sd">        Number of samples for each channel. Total duration = Ts*K</span>
+<span class="sd">    info : 2d array</span>
+<span class="sd">        Contains information about the sensor positions and channels.</span>
+<span class="sd">    Amplitude : float</span>
+<span class="sd">        Wave amplitude in arbitrary units.</span>
+<span class="sd">    Phase : float</span>
+<span class="sd">        Wave phase at the origin.</span>
+<span class="sd">    Wavenumber : float</span>
+<span class="sd">        Wavenumber in [1/m] (not in [rad/m]!)</span>
+<span class="sd">    Azimuth : float</span>
+<span class="sd">        Wave azimuth in [rad]. The wavevector points in the direction of propagation.</span>
+<span class="sd">        Wavevector = Wavenumber*[cos(Azimuth), sin(Azimuth)]</span>
+<span class="sd">    EllipticityAngle : float</span>
+<span class="sd">        Ellipticity angle of the Rayleigh wave in [rad].</span>
+<span class="sd">        The ellipticity angle is a value in the interval [-pi/2, pi/2]</span>
+<span class="sd">    Frequency : float</span>
+<span class="sd">        Temporal frequency of the wave in [Hz].</span>
+<span class="sd"> </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    y : 2d float array</span>
+<span class="sd">        It is an array of size (K, L). Each column contains the signal at the l-th location.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">L</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="n">K</span><span class="p">,</span><span class="n">L</span><span class="p">))</span>
+    
+    
+    <span class="n">t_axis</span> <span class="o">=</span> <span class="n">Ts</span><span class="o">*</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">K</span><span class="p">)</span>
+    <span class="n">Wavenumber_x</span> <span class="o">=</span> <span class="n">cos</span><span class="p">(</span><span class="n">Azimuth</span><span class="p">)</span><span class="o">*</span><span class="n">Wavenumber</span>
+    <span class="n">Wavenumber_y</span> <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">Azimuth</span><span class="p">)</span><span class="o">*</span><span class="n">Wavenumber</span>
+    
+    <span class="k">for</span> <span class="n">ll</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">L</span><span class="p">):</span>
+        <span class="n">Component</span><span class="o">=</span><span class="n">info</span><span class="p">[</span><span class="n">ll</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">pos_x</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="n">ll</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">pos_y</span> <span class="o">=</span><span class="n">info</span><span class="p">[</span><span class="n">ll</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">Component</span> <span class="o">==</span> <span class="n">EWX</span><span class="p">:</span> 
+            <span class="n">y</span><span class="p">[:,</span><span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="n">Amplitude</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">EllipticityAngle</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">Azimuth</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="n">Frequency</span><span class="o">*</span><span class="n">t_axis</span> <span class="o">-</span> <span class="p">(</span><span class="n">Wavenumber_x</span><span class="o">*</span><span class="n">pos_x</span><span class="o">+</span><span class="n">Wavenumber_y</span><span class="o">*</span><span class="n">pos_y</span><span class="p">)</span> <span class="p">)</span> <span class="o">+</span> <span class="n">Phase</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">Component</span> <span class="o">==</span> <span class="n">NSY</span><span class="p">:</span>
+            <span class="n">y</span><span class="p">[:,</span><span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="n">Amplitude</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">EllipticityAngle</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">Azimuth</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="n">Frequency</span><span class="o">*</span><span class="n">t_axis</span> <span class="o">-</span> <span class="p">(</span><span class="n">Wavenumber_x</span><span class="o">*</span><span class="n">pos_x</span><span class="o">+</span><span class="n">Wavenumber_y</span><span class="o">*</span><span class="n">pos_y</span><span class="p">)</span> <span class="p">)</span> <span class="o">+</span> <span class="n">Phase</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">Component</span> <span class="o">==</span> <span class="n">UDZ</span><span class="p">:</span>
+            <span class="n">y</span><span class="p">[:,</span><span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="n">Amplitude</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">EllipticityAngle</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="n">Frequency</span><span class="o">*</span><span class="n">t_axis</span> <span class="o">-</span> <span class="p">(</span><span class="n">Wavenumber_x</span><span class="o">*</span><span class="n">pos_x</span><span class="o">+</span><span class="n">Wavenumber_y</span><span class="o">*</span><span class="n">pos_y</span><span class="p">)</span> <span class="p">)</span> <span class="o">+</span> <span class="n">Phase</span> <span class="o">+</span> <span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">Component</span> <span class="o">==</span> <span class="n">ROTX</span><span class="p">:</span>
+            <span class="n">y</span><span class="p">[:,</span><span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="n">Amplitude</span> <span class="o">*</span> <span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span> <span class="n">Wavenumber</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">EllipticityAngle</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">Azimuth</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="n">Frequency</span><span class="o">*</span><span class="n">t_axis</span> <span class="o">-</span> <span class="p">(</span><span class="n">Wavenumber_x</span><span class="o">*</span><span class="n">pos_x</span><span class="o">+</span><span class="n">Wavenumber_y</span><span class="o">*</span><span class="n">pos_y</span><span class="p">)</span> <span class="p">)</span> <span class="o">+</span> <span class="n">Phase</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">Component</span> <span class="o">==</span> <span class="n">ROTY</span><span class="p">:</span>
+            <span class="n">y</span><span class="p">[:,</span><span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">Amplitude</span> <span class="o">*</span> <span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span> <span class="n">Wavenumber</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">EllipticityAngle</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">Azimuth</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="n">Frequency</span><span class="o">*</span><span class="n">t_axis</span> <span class="o">-</span> <span class="p">(</span><span class="n">Wavenumber_x</span><span class="o">*</span><span class="n">pos_x</span><span class="o">+</span><span class="n">Wavenumber_y</span><span class="o">*</span><span class="n">pos_y</span><span class="p">)</span> <span class="p">)</span> <span class="o">+</span> <span class="n">Phase</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">Component</span> <span class="o">==</span> <span class="n">ROTZ</span><span class="p">:</span>
+            <span class="n">y</span><span class="p">[:,</span><span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="n">K</span><span class="p">,))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Warning: Unrecognized component. Will produce zero signal.&quot;</span><span class="p">)</span>
+        
+    <span class="k">return</span><span class="p">(</span><span class="n">y</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="syntheticLoveWave"><a class="viewcode-back" href="../code.html#SyntheticWavefield.syntheticLoveWave">[docs]</a><span class="k">def</span> <span class="nf">syntheticLoveWave</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">Amplitude</span><span class="p">,</span> <span class="n">Phase</span><span class="p">,</span> <span class="n">Wavenumber</span><span class="p">,</span> <span class="n">Azimuth</span><span class="p">,</span> <span class="n">Frequency</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generate a monochromatic Love wave.</span>
+<span class="sd"> </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Ts : float</span>
+<span class="sd">        The sampling time in [s]</span>
+<span class="sd">    K : int</span>
+<span class="sd">        Number of samples for each channel. Total duration = Ts*K</span>
+<span class="sd">    info : 2d array</span>
+<span class="sd">        Contains information about the sensor positions and channels.</span>
+<span class="sd">    Amplitude : float</span>
+<span class="sd">        Wave amplitude in arbitrary units.</span>
+<span class="sd">    Phase : float</span>
+<span class="sd">        Wave phase at the origin.</span>
+<span class="sd">    Wavenumber : float</span>
+<span class="sd">        Wavenumber in [1/m] (not in [rad/m]!)</span>
+<span class="sd">    Azimuth : float</span>
+<span class="sd">        Wave azimuth in [rad]. The wavevector points in the direction of propagation.</span>
+<span class="sd">        Wavevector = Wavenumber*[cos(Azimuth), sin(Azimuth)]</span>
+<span class="sd">    Frequency : float</span>
+<span class="sd">        Temporal frequency of the wave in [Hz].</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    y : 2d float array</span>
+<span class="sd">        It is an array of size (K, L). Each column contains the signal at the l-th location.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">L</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="n">K</span><span class="p">,</span><span class="n">L</span><span class="p">))</span>
+    
+    
+    <span class="n">t_axis</span> <span class="o">=</span> <span class="n">Ts</span><span class="o">*</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">K</span><span class="p">)</span>
+    <span class="n">Wavenumber_x</span> <span class="o">=</span> <span class="n">cos</span><span class="p">(</span><span class="n">Azimuth</span><span class="p">)</span><span class="o">*</span><span class="n">Wavenumber</span>
+    <span class="n">Wavenumber_y</span> <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">Azimuth</span><span class="p">)</span><span class="o">*</span><span class="n">Wavenumber</span>
+    
+    <span class="k">for</span> <span class="n">ll</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">L</span><span class="p">):</span>
+        <span class="n">Component</span><span class="o">=</span><span class="n">info</span><span class="p">[</span><span class="n">ll</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">pos_x</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="n">ll</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">pos_y</span> <span class="o">=</span><span class="n">info</span><span class="p">[</span><span class="n">ll</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">Component</span> <span class="o">==</span> <span class="n">EWX</span><span class="p">:</span> 
+            <span class="n">y</span><span class="p">[:,</span><span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">Amplitude</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">Azimuth</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="n">Frequency</span><span class="o">*</span><span class="n">t_axis</span> <span class="o">-</span> <span class="p">(</span><span class="n">Wavenumber_x</span><span class="o">*</span><span class="n">pos_x</span><span class="o">+</span><span class="n">Wavenumber_y</span><span class="o">*</span><span class="n">pos_y</span><span class="p">)</span> <span class="p">)</span> <span class="o">+</span> <span class="n">Phase</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">Component</span> <span class="o">==</span> <span class="n">NSY</span><span class="p">:</span>
+            <span class="n">y</span><span class="p">[:,</span><span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="n">Amplitude</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">Azimuth</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="n">Frequency</span><span class="o">*</span><span class="n">t_axis</span> <span class="o">-</span> <span class="p">(</span><span class="n">Wavenumber_x</span><span class="o">*</span><span class="n">pos_x</span><span class="o">+</span><span class="n">Wavenumber_y</span><span class="o">*</span><span class="n">pos_y</span><span class="p">)</span> <span class="p">)</span> <span class="o">+</span> <span class="n">Phase</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">Component</span> <span class="o">==</span> <span class="n">UDZ</span><span class="p">:</span>
+            <span class="n">y</span><span class="p">[:,</span><span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="n">K</span><span class="p">,))</span>
+        <span class="k">elif</span> <span class="n">Component</span> <span class="o">==</span> <span class="n">ROTX</span><span class="p">:</span>
+            <span class="n">y</span><span class="p">[:,</span><span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="n">K</span><span class="p">,))</span>
+        <span class="k">elif</span> <span class="n">Component</span> <span class="o">==</span> <span class="n">ROTY</span><span class="p">:</span>
+            <span class="n">y</span><span class="p">[:,</span><span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="n">K</span><span class="p">,))</span>
+        <span class="k">elif</span> <span class="n">Component</span> <span class="o">==</span> <span class="n">ROTZ</span><span class="p">:</span>
+            <span class="n">y</span><span class="p">[:,</span><span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="n">Amplitude</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">Wavenumber</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="n">Frequency</span><span class="o">*</span><span class="n">t_axis</span> <span class="o">-</span> <span class="p">(</span><span class="n">Wavenumber_x</span><span class="o">*</span><span class="n">pos_x</span><span class="o">+</span><span class="n">Wavenumber_y</span><span class="o">*</span><span class="n">pos_y</span><span class="p">)</span> <span class="p">)</span> <span class="o">+</span> <span class="n">Phase</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Warning: Unrecognized component. Will produce zero signal.&quot;</span><span class="p">)</span>
+        
+    <span class="k">return</span><span class="p">(</span><span class="n">y</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="syntheticAWGN"><a class="viewcode-back" href="../code.html#SyntheticWavefield.syntheticAWGN">[docs]</a><span class="k">def</span> <span class="nf">syntheticAWGN</span><span class="p">(</span><span class="n">sigma2</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add white Gaussian noise to a signal.</span>
+<span class="sd"> </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sigma2 : float</span>
+<span class="sd">        Noise variance.</span>
+<span class="sd">    y : 2d float array</span>
+<span class="sd">        The noisless signal.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    y : 2d float array</span>
+<span class="sd">        The noisy signal.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">n</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span><span class="o">*</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">shape</span><span class="p">(</span><span class="n">y</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">(</span><span class="n">y</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+    
+    <span class="k">return</span><span class="p">(</span><span class="n">y</span> <span class="o">+</span> <span class="n">n</span><span class="p">)</span></div>
+    
+    
+    
+<div class="viewcode-block" id="logLikelihoodIID"><a class="viewcode-back" href="../code.html#SyntheticWavefield.logLikelihoodIID">[docs]</a><span class="k">def</span> <span class="nf">logLikelihoodIID</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">sigma2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute the log-likelihood of the observed signal y</span>
+<span class="sd"> </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : 2d float array</span>
+<span class="sd">        Noisy signal</span>
+<span class="sd">    x : 2d float array</span>
+<span class="sd">        The noisless signal.</span>
+<span class="sd">    sigma2 : float</span>
+<span class="sd">        Noise variance. Can be either a scalar (ie, equal noise variance on all channels)</span>
+<span class="sd">        or a vector of length L (ie, specifies the different variance on each channel)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    LL : float</span>
+<span class="sd">        The log-likelihood of the observations y.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># K=shape(y)[0];</span>
+    <span class="k">if</span> <span class="n">size</span><span class="p">(</span><span class="n">shape</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">L</span><span class="o">=</span><span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">L</span><span class="o">=</span><span class="n">shape</span><span class="p">(</span><span class="n">y</span><span class="p">)[</span><span class="mi">1</span><span class="p">];</span>
+    <span class="k">if</span> <span class="n">size</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">sigma2_vec</span> <span class="o">=</span> <span class="n">sigma2</span> <span class="o">*</span> <span class="n">ones</span><span class="p">((</span><span class="n">L</span><span class="p">,))</span>
+
+    <span class="n">LL</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="n">ll</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">L</span><span class="p">):</span>
+        <span class="n">LL</span> <span class="o">=</span> <span class="n">LL</span>  <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span> <span class="o">-</span>  <span class="mf">0.5</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">sigma2_vec</span><span class="p">[</span><span class="n">ll</span><span class="p">])</span> <span class="o">-</span>  <span class="mf">0.5</span><span class="o">*</span><span class="n">power</span><span class="p">(</span><span class="n">y</span><span class="p">[:,</span><span class="n">ll</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">[:,</span><span class="n">ll</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">sigma2_vec</span><span class="p">[</span><span class="n">ll</span><span class="p">]</span> <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">LL</span></div>
+
+
+<div class="viewcode-block" id="syntheticCircularRayleighWave"><a class="viewcode-back" href="../code.html#SyntheticWavefield.syntheticCircularRayleighWave">[docs]</a><span class="k">def</span> <span class="nf">syntheticCircularRayleighWave</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">Amplitude</span><span class="p">,</span> <span class="n">Phase</span><span class="p">,</span> <span class="n">Wavenumber</span><span class="p">,</span> <span class="n">EllipticityAngle</span><span class="p">,</span> <span class="n">Frequency</span><span class="p">,</span> <span class="n">SourcePosition</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generate a monochromatic circular Rayleigh wave.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">L</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">K</span><span class="p">,</span><span class="n">L</span><span class="p">))</span> <span class="o">+</span><span class="mi">1j</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">K</span><span class="p">,</span><span class="n">L</span><span class="p">))</span>
+    
+    <span class="n">t_axis</span> <span class="o">=</span> <span class="n">Ts</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">K</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">ll</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">L</span><span class="p">):</span>
+        <span class="n">Component</span><span class="o">=</span><span class="n">info</span><span class="p">[</span><span class="n">ll</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">pos_x</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="n">ll</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">pos_y</span> <span class="o">=</span><span class="n">info</span><span class="p">[</span><span class="n">ll</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="p">(</span><span class="n">SourcePosition</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">pos_x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">SourcePosition</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">pos_y</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">Azimuth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">pos_y</span><span class="o">-</span><span class="n">SourcePosition</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pos_x</span><span class="o">-</span><span class="n">SourcePosition</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">Component</span> <span class="o">==</span> <span class="n">EWX</span><span class="p">:</span>
+            <span class="n">mag</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">1j</span><span class="o">*</span><span class="n">hankel2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">Wavenumber</span><span class="o">*</span><span class="n">r</span><span class="p">))</span>
+            <span class="n">ang</span> <span class="o">=</span> <span class="n">angle</span><span class="p">(</span><span class="o">-</span><span class="mi">1j</span><span class="o">*</span><span class="n">hankel2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">Wavenumber</span><span class="o">*</span><span class="n">r</span><span class="p">))</span>
+            <span class="n">y</span><span class="p">[:,</span><span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="n">Amplitude</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">EllipticityAngle</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">Azimuth</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">Frequency</span><span class="o">*</span><span class="n">t_axis</span> <span class="o">+</span> <span class="n">Phase</span> <span class="o">+</span> <span class="n">ang</span><span class="p">)</span> <span class="o">*</span> <span class="n">mag</span>
+        <span class="k">elif</span> <span class="n">Component</span> <span class="o">==</span> <span class="n">NSY</span><span class="p">:</span>
+            <span class="n">mag</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">1j</span><span class="o">*</span><span class="n">hankel2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">Wavenumber</span><span class="o">*</span><span class="n">r</span><span class="p">))</span>
+            <span class="n">ang</span> <span class="o">=</span> <span class="n">angle</span><span class="p">(</span><span class="o">-</span><span class="mi">1j</span><span class="o">*</span><span class="n">hankel2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">Wavenumber</span><span class="o">*</span><span class="n">r</span><span class="p">))</span>
+            <span class="n">y</span><span class="p">[:,</span><span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="n">Amplitude</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">EllipticityAngle</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">Azimuth</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">Frequency</span><span class="o">*</span><span class="n">t_axis</span> <span class="o">+</span> <span class="n">Phase</span> <span class="o">+</span> <span class="n">ang</span><span class="p">)</span> <span class="o">*</span> <span class="n">mag</span>
+        <span class="k">elif</span> <span class="n">Component</span> <span class="o">==</span> <span class="n">UDZ</span><span class="p">:</span>            
+            <span class="n">mag</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="mi">1j</span><span class="o">*</span><span class="n">hankel2</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">Wavenumber</span><span class="o">*</span><span class="n">r</span><span class="p">))</span>
+            <span class="n">ang</span> <span class="o">=</span> <span class="n">angle</span><span class="p">(</span><span class="mi">1j</span><span class="o">*</span><span class="n">hankel2</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">Wavenumber</span><span class="o">*</span><span class="n">r</span><span class="p">))</span>
+            <span class="n">y</span><span class="p">[:,</span><span class="n">ll</span><span class="p">]</span> <span class="o">=</span> <span class="n">Amplitude</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">EllipticityAngle</span><span class="p">)</span> <span class="o">*</span>                <span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">Frequency</span><span class="o">*</span><span class="n">t_axis</span> <span class="o">+</span> <span class="n">Phase</span> <span class="o">+</span> <span class="n">ang</span><span class="p">)</span> <span class="o">*</span> <span class="n">mag</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Warning: Unrecognized component. Will produce zero signal.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">y</span><span class="p">)</span></div>
+
+<span class="c1">#def syntheticCircularLoveWave(Ts, K, info, Amplitude, Phase, Wavenumber, Frequency, SourcePosition):</span>
+<span class="c1">#    &quot;&quot;&quot;Generate a monochromatic circular Love wave.</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+      
+      
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+<li><a href="http://mercalli.ethz.ch/~marra/">Home</a> &raquo; <a href="../index.html">WaveDec  documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      Last updated on Jul 15, 2017.
+    <br>
+        &copy; Copyright 2017, Stefano Maranò.
+<!-- <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png"/></a>-->
+ This documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ?
+"https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost +
+"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4477781-2");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+  </body>
+</html>

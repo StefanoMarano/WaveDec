@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ReadSAC &mdash; WaveDec  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="WaveDec  documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+<li><a href="http://mercalli.ethz.ch/~marra/">Home</a> &raquo; <a href="../index.html">WaveDec  documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for ReadSAC</h1><div class="highlight"><pre>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">##################################################</span>
+<span class="c1"># © 2017 ETH Zurich, Swiss Seismological Service #</span>
+<span class="c1"># Stefano Marano&#39; - wavedec at gmail dot com     #</span>
+<span class="c1">##################################################</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Routines for reading SAC files</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+<span class="kn">from</span> <span class="nn">wdSettings</span> <span class="kn">import</span> <span class="n">Components</span>
+
+
+                
+                
+<div class="viewcode-block" id="readSac"><a class="viewcode-back" href="../code.html#ReadSAC.readSac">[docs]</a><span class="k">def</span> <span class="nf">readSac</span><span class="p">(</span><span class="n">sacFile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load a single SAC file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sacFile : string</span>
+<span class="sd">        Path to the SAC file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data : float array</span>
+<span class="sd">        Data, amplitudes</span>
+<span class="sd">    t : float array</span>
+<span class="sd">        Time axis</span>
+<span class="sd">    sachead : float array</span>
+<span class="sd">        SAC header</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">ESTR</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;&lt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">]:</span>
+        <span class="c1">#ESTR=&quot;&gt;&quot; # big endian # eg, SESAME format</span>
+        <span class="c1">#ESTR=&quot;&lt;&quot; # little endian # eg, SED format</span>
+        <span class="c1">#ESTR=&quot;@&quot; # same as machine</span>
+        <span class="n">SHEAD</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%c</span><span class="s2">70f35l5L8s16s8s8s8s8s8s8s8s8s8s8s8s8s8s8s8s8s8s8s8s8s8s&quot;</span> <span class="o">%</span> <span class="n">ESTR</span>
+        <span class="n">f</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">sacFile</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span>
+        <span class="n">sachead_size</span><span class="o">=</span><span class="n">struct</span><span class="o">.</span><span class="n">calcsize</span><span class="p">(</span><span class="n">SHEAD</span><span class="p">)</span>
+        <span class="n">tstr</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">sachead_size</span><span class="p">)</span>
+        <span class="n">sachead</span><span class="o">=</span><span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">SHEAD</span><span class="p">,</span> <span class="n">tstr</span><span class="p">)</span>
+        
+        <span class="n">nvhdr</span> <span class="o">=</span> <span class="n">sachead</span><span class="p">[</span><span class="mi">76</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">nvhdr</span> <span class="o">==</span> <span class="mi">4</span> <span class="o">|</span> <span class="n">nvhdr</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="c1"># Old sac format. Never tested.</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;NVHDR = {0}, file {1} may be from old SAC version.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nvhdr</span><span class="p">,</span> <span class="n">sacFile</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">nvhdr</span> <span class="o">!=</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="c1"># We are reading in the wrong byte order.</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">nvhdr</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="c1"># Good, we are reading in the propoer byte order.</span>
+            <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;NVHDR = {0}, file {1} may be corrupted.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nvhdr</span><span class="p">,</span> <span class="n">sacFile</span><span class="p">))</span>
+            
+    <span class="n">dt</span><span class="o">=</span><span class="n">sachead</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">npts</span><span class="o">=</span><span class="n">sachead</span><span class="p">[</span><span class="mi">79</span><span class="p">]</span>
+
+    <span class="n">t</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">npts</span><span class="o">*</span><span class="n">dt</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+    <span class="n">dsize</span><span class="o">=</span><span class="n">struct</span><span class="o">.</span><span class="n">calcsize</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%c%d</span><span class="s2">f&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ESTR</span><span class="p">,</span><span class="n">npts</span><span class="p">))</span>
+    <span class="n">dat_str</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">dsize</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%c%d</span><span class="s2">f&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ESTR</span><span class="p">,</span> <span class="n">npts</span><span class="p">),</span> <span class="n">dat_str</span><span class="p">))</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">sachead</span><span class="p">)</span></div>
+    
+
+<div class="viewcode-block" id="readSacDir"><a class="viewcode-back" href="../code.html#ReadSAC.readSacDir">[docs]</a><span class="k">def</span> <span class="nf">readSacDir</span><span class="p">(</span><span class="n">sac_dir</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load SAC files from a folder.</span>
+<span class="sd"> </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sac_dir : string</span>
+<span class="sd">        Path to the folder containing the SAC files.</span>
+<span class="sd"> </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    y : 2d float array</span>
+<span class="sd">        It is an array of size (K, L). Each column contains the signal at the l-th location.</span>
+<span class="sd">    info : 2d array</span>
+<span class="sd">        An array containing information about sensor location and channels.</span>
+<span class="sd">        It has L rows, where L is the number of channels.</span>
+<span class="sd">        Each rows has the following form:</span>
+<span class="sd">          pos_x, pos_y, pos_z, cmp, Ts</span>
+<span class="sd">        where the first three fields are the position of the sensor in [m].</span>
+<span class="sd">        cmp is the component code.</span>
+<span class="sd">        Ts is the sampling time as read from the SAC file.</span>
+<span class="sd">    Ts : float</span>
+<span class="sd">        Sampling time in [s].</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">fileList</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">sac_dir</span><span class="o">+</span><span class="s1">&#39;/*.sac&#39;</span><span class="p">))</span>
+    <span class="n">N_files</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fileList</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">N_files</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;No files found in {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sac_dir</span><span class="p">))</span>
+        
+    
+    <span class="n">info</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N_files</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">ff</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">N_files</span><span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Loading SAC file &quot;</span> <span class="o">+</span> <span class="n">fileList</span><span class="p">[</span><span class="n">ff</span><span class="p">])</span>
+        <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">sachead</span><span class="p">)</span>  <span class="o">=</span> <span class="n">readSac</span><span class="p">(</span><span class="n">fileList</span><span class="p">[</span><span class="n">ff</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">ff</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">K</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">Ts</span> <span class="o">=</span> <span class="n">sachead</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># Sampling interval</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">K</span><span class="p">,</span><span class="n">N_files</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">Ts</span> <span class="o">!=</span> <span class="n">sachead</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="c1">#print(fileList[ff])</span>
+                <span class="c1">#print(sachead[0])</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Sampling time Ts is not consistent across input files.&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">K</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                <span class="c1">#print(fileList[ff])</span>
+                <span class="c1">#print(len(data))</span>
+                <span class="c1"># TODO found in SED database a dataset with this problem</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Data length K is not consistent across input files.&#39;</span><span class="p">)</span> 
+        <span class="n">y</span><span class="p">[:,</span><span class="n">ff</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">info</span><span class="p">[</span><span class="n">ff</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">sachead</span><span class="p">[</span><span class="mi">47</span><span class="p">]</span> <span class="c1"># x coordinate</span>
+        <span class="n">info</span><span class="p">[</span><span class="n">ff</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">sachead</span><span class="p">[</span><span class="mi">48</span><span class="p">]</span> <span class="c1"># y coordinate</span>
+        <span class="n">info</span><span class="p">[</span><span class="n">ff</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">sachead</span><span class="p">[</span><span class="mi">49</span><span class="p">]</span> <span class="c1"># z coordinate</span>
+        <span class="n">info</span><span class="p">[</span><span class="n">ff</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">sachead</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># Sampling interval</span>
+        
+        <span class="nb">cmp</span> <span class="o">=</span> <span class="n">sachead</span><span class="p">[</span><span class="mi">129</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="c1"># terminate string with null char and remove trailing whitespaces</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">info</span><span class="p">[</span><span class="n">ff</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">Components</span><span class="p">[</span><span class="nb">cmp</span><span class="p">]</span> <span class="c1"># component</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Unknown SAC component {0} found while reading {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">cmp</span><span class="p">,</span> <span class="n">fileList</span><span class="p">[</span><span class="n">ff</span><span class="p">]))</span>        
+
+    <span class="k">return</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">Ts</span><span class="p">,</span> <span class="n">fileList</span><span class="p">)</span></div>
+    
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+<li><a href="http://mercalli.ethz.ch/~marra/">Home</a> &raquo; <a href="../index.html">WaveDec  documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      Last updated on Jul 15, 2017.
+    <br>
+        &copy; Copyright 2017, Stefano Maranò.
+<!-- <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png"/></a>-->
+ This documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ?
+"https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost +
+"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4477781-2");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+  </body>
+</html>

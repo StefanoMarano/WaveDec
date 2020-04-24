@@ -1,0 +1,601 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>User’s guide: WaveDec &mdash; WaveDec  documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="WaveDec  documentation" href="index.html" />
+    <link rel="next" title="User’s guide: WaveDecActive" href="userguide_WaveDecActive.html" />
+    <link rel="prev" title="A very quick start" href="quickstart.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="userguide_WaveDecActive.html" title="User’s guide: WaveDecActive"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="quickstart.html" title="A very quick start"
+             accesskey="P">previous</a> |</li>
+<li><a href="http://mercalli.ethz.ch/~marra/">Home</a> &raquo; <a href="index.html">WaveDec  documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="user-s-guide-wavedec">
+<h1>User&#8217;s guide: WaveDec<a class="headerlink" href="#user-s-guide-wavedec" title="Permalink to this headline">¶</a></h1>
+<p>A typical command to run WaveDec looks as follows:</p>
+<div class="highlight-bash"><div class="highlight"><pre>$ WaveDec.py --config_file /path/to/config/file/MyConfig.yaml
+</pre></div>
+</div>
+<p>As a command line option we specify the path and name of a configuration file.
+This configuration file contains all the settings that you may wish to specify,
+including input/output and processing parameters. The syntax of this configuration file is described below.</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#input-files" id="id1">Input files</a><ul>
+<li><a class="reference internal" href="#configuration-file" id="id2">Configuration file</a></li>
+<li><a class="reference internal" href="#data" id="id3">Data</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#processing" id="id4">Processing</a><ul>
+<li><a class="reference internal" href="#model-selection-love-wave-rayleigh-wave-or-nothing" id="id5">Model selection: Love wave, Rayleigh wave, or nothing?</a></li>
+<li><a class="reference internal" href="#speeding-it-up" id="id6">Speeding it up</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#output-files" id="id7">Output files</a><ul>
+<li><a class="reference internal" href="#estimated-wavefield-parameters" id="id8">Estimated wavefield parameters</a></li>
+<li><a class="reference internal" href="#resolution-limits" id="id9">Resolution limits</a></li>
+<li><a class="reference internal" href="#array-layout" id="id10">Array Layout</a></li>
+<li><a class="reference internal" href="#log-file" id="id11">Log file</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#analysis-of-the-output-files" id="id12">Analysis of the output files</a></li>
+</ul>
+</div>
+<div class="section" id="input-files">
+<h2><a class="toc-backref" href="#contents">Input files</a><a class="headerlink" href="#input-files" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="configuration-file">
+<span id="wavedecconfigurationfile"></span><h3><a class="toc-backref" href="#contents">Configuration file</a><a class="headerlink" href="#configuration-file" title="Permalink to this headline">¶</a></h3>
+<p>As described in the <a class="reference internal" href="quickstart.html"><em>quick start guide</em></a>, few parameters can be passed via command line. However you will need to provide a configuration file to specify important processing options.</p>
+<p>Remember that <strong>all the parameters are optional</strong>. If you are unsure about a specific processing option, do not set it and WaveDec will attempt to do its best.</p>
+<p>The configuration file is written in <a class="reference external" href="https://en.wikipedia.org/wiki/YAML">YAML</a>. The YAML syntax is simple and it is sufficient to look at the commented example below.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="c1">################################</span>
+<span class="c1">## This is an example configuration file to be used with WaveDec</span>
+<span class="c1">##</span>
+
+<span class="c1">################################</span>
+<span class="c1">## Input and output options</span>
+<span class="c1">################################</span>
+<span class="l l-Scalar l-Scalar-Plain">INPUT</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/path/to/input/files</span>     <span class="c1"># Folder containing input SAC files. Default is current folder &lt;.&gt;</span>
+<span class="l l-Scalar l-Scalar-Plain">OUTPUT</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/path/to/output/files</span>   <span class="c1"># Folder where output files will be saved. Default is current folder &lt;.&gt;</span>
+
+<span class="c1">################################</span>
+<span class="c1">## Processing options</span>
+<span class="c1">################################</span>
+<span class="l l-Scalar l-Scalar-Plain">Twindow</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">25</span>    <span class="c1"># Duration, of the analysis window, in seconds. Default is &lt;25&gt;</span>
+<span class="l l-Scalar l-Scalar-Plain">MaxWindows</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">50</span> <span class="c1"># Maximum number of time windows to be analyzed. Set &lt;0&gt; for largest possible. Default is &lt;0&gt;</span>
+<span class="l l-Scalar l-Scalar-Plain">Fmin</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">0.5</span>      <span class="c1"># Smallest frequency to analyze, in Hertz. Default is &lt;10/Twindow&gt;</span>
+<span class="l l-Scalar l-Scalar-Plain">Fmax</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">15</span>       <span class="c1"># Largest frequency to analyze, in Hertz. Default is &lt;min(20, 0.5/Ts)&gt;</span>
+<span class="l l-Scalar l-Scalar-Plain">Fspacing</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">lin</span>  <span class="c1"># Linear &lt;lin&gt; or logarithmic &lt;log&gt; frequency spacing. Default is &lt;lin&gt;</span>
+<span class="l l-Scalar l-Scalar-Plain">Fnum</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">50</span>       <span class="c1"># Number of frequencies, between Fmin and Fmax, to be analyzed.</span>
+               <span class="c1"># Default is &lt;50&gt;. Set Fnum: 0 to model all DFT frequencies.</span>
+<span class="l l-Scalar l-Scalar-Plain">Vmin</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">50</span>       <span class="c1"># Smallest velocity considered in m/s. May speed up computation. Default is &lt;50&gt;</span>
+
+<span class="l l-Scalar l-Scalar-Plain">MaxWaves</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span>               <span class="c1"># Maximum number of waves to be modeled for each time window at a given frequency. Default is &lt;3&gt;</span>
+<span class="l l-Scalar l-Scalar-Plain">ModelRayleighWaves</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>  <span class="c1"># Boolean indicating whether to model or not Rayleigh waves. Default is &lt;true&gt;</span>
+<span class="l l-Scalar l-Scalar-Plain">ModelLoveWaves</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>      <span class="c1"># Boolean indicating whether to model or not Love waves. Default is &lt;true&gt;</span>
+<span class="l l-Scalar l-Scalar-Plain">ModelNoise</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>          <span class="c1"># Boolean indicating whether to allow or not a window without Rayleigh and Love waves. Default is &lt;true&gt;</span>
+
+<span class="c1">################################</span>
+<span class="c1">## More processing options (less used)</span>
+<span class="c1">################################</span>
+<span class="c1"># Tstart: 10                # Ignore the initial Tstart seconds of the recording. Default is &lt;0&gt;.</span>
+<span class="c1"># Kmax: 0.05                # The largest wavenumber to analyze, in 1/m. Default is inferred from array geometry.</span>
+<span class="c1"># Kstep: 1e-3               # Step size for grid search along wavenumber axis, in 1/m. Default is inferred from array geometry.</span>
+<span class="c1"># Estep: 0.1                # Step size for grid search along ellipticity angle axis, in rad. Default is &lt;pi/90&gt;.</span>
+<span class="c1"># Ts: 0.01                  # Sampling time in seconds. This option will override what is found in the SAC headers.</span>
+<span class="c1"># Gamma: 0.2                # Controls model complexity. (0 for pure ML, 1 for BIC, other values for intermediate strategies). Default is &lt;1&gt;</span>
+<span class="c1"># ModelVerticalWaves: false # Boolean indicating whether to model or not Vertical-component-only waves. Default is &lt;false&gt;</span>
+                            <span class="c1"># If ModelVerticalWaves = true, it will be forced ModelRayleighWaves = ModelLoveWaves = false</span>
+<span class="c1"># MaxIterations: 5          # The maximum number of iterations for iterative wave estimation. Default is &lt;10&gt;</span>
+
+<span class="c1">## End of ExampleConfig.yaml</span>
+</pre></div>
+</div>
+<p>The example configuration file shown above is available <a class="reference download internal" href="_downloads/ExampleConfig.yaml" download=""><code class="xref download docutils literal"><span class="pre">here</span></code></a>.</p>
+<p>The frequencies that are actually processed by WaveDec may be different from what you expected. WaveDec will always process discrete Fourier transform (DFT) frequencies. The frequency actually processed are chosen among the possible DFT frequencies in order to loosely match what is requested by the user. The possible DFT frequencies are given, for example, by the Python function <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.fft.fftfreq.html">numpy.fft.fftfreq(Twindow/Ts, d=Ts)</a>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The configuration file is case sensitive.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The syntax of the configration file is not checked properly. Many mistakes will go unoticed eg: <code class="docutils literal"><span class="pre">F_min</span></code> or <code class="docutils literal"><span class="pre">fmin</span></code> instead of <code class="docutils literal"><span class="pre">Fmin</span></code>. Please check info printed when WaveDec starts or the log file to make sure the configuration file is read correctly.</p>
+</div>
+</div>
+<div class="section" id="data">
+<h3><a class="toc-backref" href="#contents">Data</a><a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h3>
+<p>The program reads as input binary SAC files, both big- and little-endian. Certain fields of the SAC header must be set with the right values.</p>
+<p>In the following table a list of the SAC header fields used by WaveDec.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="3%" />
+<col width="18%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field name</th>
+<th class="head">Word</th>
+<th class="head">Value</th>
+<th class="head">Comments</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>DELTA</td>
+<td>0</td>
+<td>Sampling interval [s]</td>
+<td><div class="first last line-block">
+<div class="line">Must be the same in all SAC files of the provided input folder</div>
+<div class="line">The value found in the header can be overridden within the <a class="reference internal" href="#configuration-file">Configuration file</a></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td>NPTS</td>
+<td>79</td>
+<td>Number of samples</td>
+<td><div class="first last line-block">
+<div class="line">Must be the same in all SAC files of the provided input folder</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td>USER7</td>
+<td>47</td>
+<td>Easting [m]</td>
+<td><div class="first last line-block">
+<div class="line"><img class="math" src="_images/math/188c175aac0a8a9c22499336711b5d7256407254.png" alt="x"/> coordinate in meters in a Cartesian coordinate system</div>
+<div class="line">E.g., Swiss coordinate system, East&#8211;West</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td>USER8</td>
+<td>48</td>
+<td>Northing [m]</td>
+<td><div class="first last line-block">
+<div class="line"><img class="math" src="_images/math/b124ff74afb0914bb434e8fb849eb56d734412f8.png" alt="y"/> coordinate in meters in a Cartesian coordinate system</div>
+<div class="line">E.g., Swiss coordinate system, North-South</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td>USER9</td>
+<td>49</td>
+<td>Elevation [m]</td>
+<td><div class="first last line-block">
+<div class="line"><img class="math" src="_images/math/84d7271dd9e78c1e05d6c3c6ecb60309ef7dfc73.png" alt="z"/> coordinate, station elevation. Not in use.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td>KCMPNM</td>
+<td>129</td>
+<td>Component code</td>
+<td><div class="first last line-block">
+<div class="line">Valid codes for the components are:</div>
+<div class="line">Vertical (<img class="math" src="_images/math/5821f99908694d5932b55b48ad6a9569e3918f8e.png" alt="u_z"/>): <code class="docutils literal"><span class="pre">[Z,</span> <span class="pre">UDZ,</span> <span class="pre">BHZ,</span> <span class="pre">EHZ,</span> <span class="pre">HGZ,</span> <span class="pre">HHZ,</span> <span class="pre">EH1,</span> <span class="pre">EH4]</span></code></div>
+<div class="line">East-West (<img class="math" src="_images/math/ed671879a872152dd796f9028914fd7bb15c9fe5.png" alt="u_x"/>): <code class="docutils literal"><span class="pre">[E,</span> <span class="pre">EWX,</span> <span class="pre">BHE,</span> <span class="pre">EHE,</span> <span class="pre">HGE,</span> <span class="pre">HHE,</span> <span class="pre">EH3,</span> <span class="pre">EH6]</span></code></div>
+<div class="line">North-South (<img class="math" src="_images/math/b4c1b0b38122c1ac72e01929159a6307b3192eff.png" alt="u_y"/>): <code class="docutils literal"><span class="pre">[N,</span> <span class="pre">NSY,</span> <span class="pre">BHN,</span> <span class="pre">EHN,</span> <span class="pre">HGN,</span> <span class="pre">HHN,</span> <span class="pre">EH2,</span> <span class="pre">EH5]</span></code></div>
+<div class="line">Rotation around East-West (<img class="math" src="_images/math/bc4d5574cfe97b41050c19f16ed0c16b18638080.png" alt="\omega_x"/>): <code class="docutils literal"><span class="pre">[ROTX,</span> <span class="pre">RX]</span></code></div>
+<div class="line">Rotation around North-South (<img class="math" src="_images/math/54663485a0bf60309b9113992b9e5ed79c055ce3.png" alt="\omega_y"/>): <code class="docutils literal"><span class="pre">[ROTY,</span> <span class="pre">RY]</span></code></div>
+<div class="line">Rotation around Vertical (<img class="math" src="_images/math/bb50f680cbd3127b096671f525f4fb34b8a04030.png" alt="\omega_z"/>): <code class="docutils literal"><span class="pre">[ROTZ,</span> <span class="pre">RZ]</span></code></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>About <strong>polarity</strong>. On the vertical component a positive sign of the signal implies an upward motion.
+On the east-west component an eastward motion. On the north-south component a northward motion.</p>
+<p>More documentation on the SAC header is found <a class="reference external" href="http://www.iris.edu/files/sac-manual/manual/file_format.html">here</a>.</p>
+<p>Missing files (e.g., a sensor having recorded only one or two components) are not an issue. If the recording from a specific sensor/component is unusable, simply remove the corresponding file and leave the good ones in the <code class="docutils literal"><span class="pre">INPUT</span></code> folder.</p>
+</div>
+</div>
+<div class="section" id="processing">
+<h2><a class="toc-backref" href="#contents">Processing</a><a class="headerlink" href="#processing" title="Permalink to this headline">¶</a></h2>
+<p>After reading the configuration file and the input files WaveDec will start processing the data. The configuration parameters in use are printed at statup. Check wheather your configuration file was read properly!</p>
+<p>An estimate of the processing duration is printed and updated on the console. As soon as the processing of a signal window is completed, estimated parameters are written to file immediately in the <code class="docutils literal"><span class="pre">OUTPUT</span></code> folder. You may check and plot intermediate results at any time.</p>
+<p>To terminate the processing prematurely press <code class="docutils literal"><span class="pre">CTRL+C</span></code>.  Starting again the processing will overwrite the output files and start the processing from the beginning of the recording.</p>
+<div class="section" id="model-selection-love-wave-rayleigh-wave-or-nothing">
+<span id="loverayleighnoise"></span><h3><a class="toc-backref" href="#contents">Model selection: Love wave, Rayleigh wave, or nothing?</a><a class="headerlink" href="#model-selection-love-wave-rayleigh-wave-or-nothing" title="Permalink to this headline">¶</a></h3>
+<p>One strength of WaveDec is the ability to model multiple waves at the same time (See <a class="reference internal" href="scientific.html#secjointmodeling"><span>Benefit of joint modeling Rayleigh and Love waves</span></a> for a motivation). This approach is called wavefield decomposition, hence WaveDec. The algorithm gradually increases the number of waves modeled up to a maximum number specified by <code class="docutils literal"><span class="pre">MaxWaves</span></code>. The number of waves effectively modeled is in general different at different frequencies and in different time windows.</p>
+<p>When decomposing the wavefield WaveDec has to choose whether to fit a Love wave, a Rayleigh wave or to stop adding waves. This is a model selection problem. The <a class="reference external" href="https://en.wikipedia.org/wiki/Bayesian_information_criterion">Bayesian Information Criterion (BIC)</a> is used to make this choice. In a nutshell, the BIC criterion selects the model with smallest BIC value. The BIC value is defined as</p>
+<div class="math">
+<p><img src="_images/math/d8df6500a80a16590cf6beab1e1a34093b937717.png" alt="BIC = -2p(y|\theta) + N_p \ln(LK)\,,"/></p>
+</div><p>where <img class="math" src="_images/math/e41d2c139df6f04899b38273ca8f8878cbe5ffa7.png" alt="p(y|\theta)"/> is the model likelihood, <img class="math" src="_images/math/9c8a84a7ca2451f5d67164e8d6fcda5b7abcc795.png" alt="N_p"/> is the number of model parameters, and <img class="math" src="_images/math/dec793206685a46d8ffa9545687557ee9aef65b5.png" alt="LK"/> is the number of measurements. The quantity <img class="math" src="_images/math/ed29960fd44a6ee698cf9415421d598383d8ef18.png" alt="-2p(y|\theta)"/> describes the goodness of fit of our model. The quantity <img class="math" src="_images/math/25bd58496215971f29851c7a1eee5cb14109db25.png" alt="N_p \ln(LK)"/> is a penalty term related to the complexity of the model.</p>
+<p>The algorithm iteratively consider the three following possibilities:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Should a Love wave be added to the current model? (Assuming that <code class="docutils literal"><span class="pre">ModelLove:</span> <span class="pre">true</span></code>)</li>
+<li>Should a Rayleigh wave be added to the current model? (Assuming that <code class="docutils literal"><span class="pre">ModelRayleigh:</span> <span class="pre">true</span></code>)</li>
+<li>Should we stop adding additional waves?  (Assuming that <code class="docutils literal"><span class="pre">ModelNoise:</span> <span class="pre">true</span></code>) And/or was the maximum number of waves <code class="docutils literal"><span class="pre">MaxWaves</span></code> reached?</li>
+</ul>
+</div></blockquote>
+<p>For each of these three possibilities, corresponding to three possible models of the wavefield, the BIC value is computed. The model corresponding to the smallest BIC value is chosen.</p>
+<p>When doing model selection, we want to avoid underfitting or <a class="reference external" href="https://en.wikipedia.org/wiki/Overfitting">overfitting</a> the data.</p>
+<p>Setting <code class="docutils literal"><span class="pre">ModelNoise:</span> <span class="pre">false</span></code> is not recommended as it may lead to overfitting the data. In fact, WaveDec is forced to model exactly <code class="docutils literal"><span class="pre">MaxWaves</span></code> waves. It will not be able to create a model with less waves.</p>
+<p>When WaveDec is allowed to model fewer than <code class="docutils literal"><span class="pre">MaxWaves</span></code> (that is, with the flag <code class="docutils literal"><span class="pre">ModelNoise:</span> <span class="pre">true</span></code> &#8211;recommended choice) then the result will exhibit less outliers because most of the outliers have been rejected.</p>
+<p>However, we observed that in certain circumstances this may lead underfitting and loosing information from weaker waves (e.g., higher modes, high frequencies, especially in active surveys). We therefore introduce another optional parameter enabling a more aggressive model selection strategy.</p>
+<p>We introduce the parameter <img class="math" src="_images/math/a4e16ca0c0bea866cc75dcd6309288dbc756e733.png" alt="\gamma&gt;0"/> to tune the result to achieve more or less complex models. It is controlled with the parameter <code class="docutils literal"><span class="pre">Gamma</span></code> in the configuration file. The new model selection strategy chooses the model with smallest</p>
+<div class="math">
+<p><img src="_images/math/51bfbe9d41e7703f5cc53bab9d572c71c54b7691.png" alt="BIC_\gamma = -2p(y|\theta) + \gamma N_p \ln(LK)\,."/></p>
+</div><p>A small <img class="math" src="_images/math/6d5791a916c9071c52f072e77f1f9359be4f9894.png" alt="\gamma=0"/> reduces the penalty for a complex model. Model selection will be more aggressive and favour more complex models (i.e., more waves).</p>
+<p>For <img class="math" src="_images/math/6d5791a916c9071c52f072e77f1f9359be4f9894.png" alt="\gamma=0"/> the ML criterion will be used for model selection. This will lead to greatly overfit the data. For <img class="math" src="_images/math/bfdaf84226c45de8b21e5fd1a521a836ebe84368.png" alt="\gamma=1"/> the standard BIC approach is followed. Setting <img class="math" src="_images/math/3e8fcbd4d0625331800ae9a17ede9fa6e3eccf7d.png" alt="\gamma&lt;1"/> allows a more aggressive strategy compared to pure BIC, thus including more models from weaker waves but also more outliers.</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Our suggestion is to model jointly Love and Rayleigh wave (and the noise model) with the default BIC model selection criterion. Setting <code class="docutils literal"><span class="pre">MaxWaves</span></code> to 3 or 5 appears to work well.</p>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">If your output files are empty or present very few waves, try with a smaller <code class="docutils literal"><span class="pre">Gamma</span></code> (e.g. <code class="docutils literal"><span class="pre">Gamma:</span> <span class="pre">0.5</span></code>, <code class="docutils literal"><span class="pre">Gamma:</span> <span class="pre">0.1</span></code>...). In our experience, this was necessary at very few passive survey sites and at most active survey sites.</p>
+</div>
+</div>
+<div class="section" id="speeding-it-up">
+<h3><a class="toc-backref" href="#contents">Speeding it up</a><a class="headerlink" href="#speeding-it-up" title="Permalink to this headline">¶</a></h3>
+<p>While it is recommended that you process multiple waves jointly, you may find it too time consuming. This section is about choosing processing options to obtain results faster. It may be a good idea for a quick preliminary analysis of your data.</p>
+<ul>
+<li><p class="first"><strong>Reduce the number of waves.</strong> In the configuration file, set</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l l-Scalar l-Scalar-Plain">MaxWaves</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+</pre></div>
+</div>
+<p>so that a single wave is fitted for each time window / frequency. This prevents the software from iteratively estimate wave parameters. Still, for each time window / frequency both Love wave and Rayleigh wave fit are attempted and only the best one is kept.</p>
+</li>
+<li><p class="first"><strong>Process different waves separately.</strong> Instead of running one processing round modeling both Love waves and Rayleigh waves it may be faster to run two separate runs. You will need to create two separate configuration files.</p>
+<p>In the first run, only Love waves are analyzed and the configuration file looks like:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l l-Scalar l-Scalar-Plain">ModelRayleighWaves</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="l l-Scalar l-Scalar-Plain">ModelLoveWaves</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="l l-Scalar l-Scalar-Plain">ModelNoise</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+<p>In the second run, only Rayleigh waves are analyzed:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l l-Scalar l-Scalar-Plain">ModelRayleighWaves</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="l l-Scalar l-Scalar-Plain">ModelLoveWaves</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="l l-Scalar l-Scalar-Plain">ModelNoise</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="output-files">
+<h2><a class="toc-backref" href="#contents">Output files</a><a class="headerlink" href="#output-files" title="Permalink to this headline">¶</a></h2>
+<p>The output is saved to CSV files in the directory specified in the configuration file by <code class="docutils literal"><span class="pre">OUTPUT</span></code>. The output files can be opened with a spreadsheet or with a simple text editor.</p>
+<div class="section" id="estimated-wavefield-parameters">
+<h3><a class="toc-backref" href="#contents">Estimated wavefield parameters</a><a class="headerlink" href="#estimated-wavefield-parameters" title="Permalink to this headline">¶</a></h3>
+<p>Output with the estimated parameters is written to disk after each time window is processed. Therefore you do not need to wait for the end of the elaboration to see partial results.</p>
+<p>The output file for Rayleigh waves, <code class="docutils literal"><span class="pre">RayleighWaves.csv</span></code>, looks like this:</p>
+<div class="highlight-text"><div class="highlight"><pre># WaveDec output file
+# Frequency	Amplitude	Wavenumber	Velocity	Azimuth	EllipticityAngle
+# [Hz]	[a.u.]	[1/m]	[m/s]	[rad]	[rad]
+3.450e+00	2.290e-03	7.072e-03	4.878e+02	2.856e+00	-6.319e-01
+3.950e+00	2.637e-03	2.063e-03	1.914e+03	-1.938e+00	4.604e-01
+4.199e+00	3.114e-03	1.793e-02	2.342e+02	2.854e+00	2.968e-01
+4.699e+00	2.055e-03	2.162e-02	2.173e+02	2.965e+00	6.162e-01
+4.899e+00	2.691e-03	2.283e-02	2.146e+02	2.886e+00	5.148e-01
+5.149e+00	2.099e-03	7.524e-03	6.844e+02	-5.877e-01	-1.407e+00
+5.649e+00	1.697e-03	3.014e-02	1.875e+02	2.278e+00	9.730e-01
+</pre></div>
+</div>
+<p>Comment lines begin with <code class="docutils literal"><span class="pre">#</span></code>. On each row columns are separated by a tabulation character <code class="docutils literal"><span class="pre">\t</span></code>.</p>
+<p>Each column of the CSV file is described in the following table.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="6%" />
+<col width="7%" />
+<col width="88%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column name</th>
+<th class="head">Unit</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Frequency</td>
+<td>Hertz</td>
+<td><div class="first last line-block">
+<div class="line">The frequency <img class="math" src="_images/math/0001d02b63ede2fe3219e05a7cd09c82ae6298b6.png" alt="f"/> at which the processing was performed</div>
+<div class="line"><br /></div>
+<div class="line">No matter what the frequency options provided in the configuration file are, the frequencies actually processed always correspond to Discrete Fourier transform (DFT) frequencies, i.e. <img class="math" src="_images/math/1e1f96046293ecea366efe46373cefe09b8620f6.png" alt="f_n=n/T_s"/> where <img class="math" src="_images/math/413f8a8e40062a9090d9d50b88bc7b551b314c26.png" alt="n"/> is a positive integer and <img class="math" src="_images/math/3a69de575e58704a0515a0f029cf86eebcf2d3b9.png" alt="T_s"/> is the sampling interval.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td>Amplitude</td>
+<td>Same unit as input</td>
+<td><div class="first last line-block">
+<div class="line">The ML estimate of the wave amplitude <img class="math" src="_images/math/ad59b6e24a4a00ac621801f8d7513d68be654ab5.png" alt="\alpha"/></div>
+<div class="line"><br /></div>
+<div class="line">The estimated amplitude is always greater than zero <img class="math" src="_images/math/06014bc0035d8a69430d1472e3754e6e45124d97.png" alt="\alpha&gt;0"/>.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td>Wavenumber</td>
+<td>1/meter</td>
+<td><div class="first last line-block">
+<div class="line">The ML estimate of the wavenumber <img class="math" src="_images/math/dd95c55069c86910ffbe2f9833321d0034fd8036.png" alt="\kappa"/></div>
+<div class="line"><br /></div>
+<div class="line">The estimated wavenumber is always greater than zero <img class="math" src="_images/math/f081c000276fee90889110b28d6f2423eaeed406.png" alt="\kappa&gt;0"/>.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td>Velocity</td>
+<td>meter/second</td>
+<td><div class="first last line-block">
+<div class="line">The ML estimate of the velocity of propagation, <img class="math" src="_images/math/f0051e58ea53f8ffcc54cc7c25bfcfff304396e3.png" alt="v=f/\kappa"/></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td>Azimuth</td>
+<td>radian</td>
+<td><div class="first last line-block">
+<div class="line">The ML estimate of the azimuth <img class="math" src="_images/math/1a52481ac36eb889dcbbdcc0783ba2a755ba3547.png" alt="\psi"/></div>
+<div class="line"><br /></div>
+<div class="line">It is a value in the interval <img class="math" src="_images/math/9c4c538dd2d5eb477ade6b03f9ca80301b927121.png" alt="\psi\in[0,2\pi]"/>. The azimuth is measured counterclockwise from the <img class="math" src="_images/math/188c175aac0a8a9c22499336711b5d7256407254.png" alt="x"/> (east) axes.</div>
+<div class="line">E.g. <img class="math" src="_images/math/4aa97faf4b848b5a8e5791204cd07656783bdb67.png" alt="\psi=0"/> for east, <img class="math" src="_images/math/184c47a6f02022a94bcacc9cd3339ea08fd9fa25.png" alt="\psi=\pi/4"/> for north-east, <img class="math" src="_images/math/3a62719e7a1a92f1306bc0a76ff5fd004533b056.png" alt="\psi=\pi/2"/> for north.</div>
+<div class="line"><br /></div>
+<div class="line">The wavevector is <img class="math" src="_images/math/f1e08146ca3b90d48f8f384996149c003dedd945.png" alt="\kappa\,(\cos(\psi),\sin(\psi))"/> and points in the direction of propagation (not in the direction of arrival).</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td>EllipticityAngle</td>
+<td>radian</td>
+<td><div class="first last line-block">
+<div class="line">The ML estimate of the ellipticity angle <img class="math" src="_images/math/26bfd3bc4c5db78139d8897f9cfa5bba511a2f22.png" alt="\xi"/> of a Rayleigh wave</div>
+<div class="line"><br /></div>
+<div class="line">It is a value in the interval <img class="math" src="_images/math/db31d3a72eda98abdb6f7dfb5149d7bee9beae7f.png" alt="\xi\in[-\pi/2,\pi/2]"/>. Positive for prograde particle motion, negative for retrograde motion.</div>
+<div class="line">The ellipticity angle is related to the H/V ratio as <img class="math" src="_images/math/c4543dbc6523f05250a28cbaacad707b96fbb2e6.png" alt="H/V=|\tan(\xi)|"/>.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>A very similar output file is generated for Love waves (<code class="docutils literal"><span class="pre">LoveWaves.csv</span></code>).</p>
+<div class="admonition caution">
+<p class="first admonition-title">Caution</p>
+<p class="last">The name of the output files should not be changed as it is needed by <code class="docutils literal"><span class="pre">wdPicker.py</span></code> when analysing the files.</p>
+</div>
+</div>
+<div class="section" id="resolution-limits">
+<h3><a class="toc-backref" href="#contents">Resolution limits</a><a class="headerlink" href="#resolution-limits" title="Permalink to this headline">¶</a></h3>
+<p>The file <code class="docutils literal"><span class="pre">ArrayResolutionLimits.csv</span></code> contains the resolutions limits of the array.</p>
+<p>The study of resolution limits is an intricate matter. The resolution limits provided here should be considered as approximate and indicative only. Good results may show up outside the resolution limits, and bad results inside the limits. Be wise and use your expertise.</p>
+<p>Let <img class="math" src="_images/math/48e3dd2dd6877be565b3b0316c3623861826c694.png" alt="d_{\textrm{min}}"/> and <img class="math" src="_images/math/42250acb4dc7c86ab4ef46f79ba6bb2ae8e984f2.png" alt="d_{\textrm{max}}"/> be the smallest and the largest interstation distance within the array stations (<img class="math" src="_images/math/42250acb4dc7c86ab4ef46f79ba6bb2ae8e984f2.png" alt="d_{\textrm{max}}"/> is also known as array aperture).</p>
+<p>The smallest and largest resolvable wavenumbers are defined (in 1/meter) as <img class="math" src="_images/math/58dffccb8e0c16fec1a94d8d4f4998000353aac5.png" alt="\kappa_{\textrm{min}}=1/d_{\textrm{max}}"/> and <img class="math" src="_images/math/bc1e49c08f83c8de28403f098be524e510d8b605.png" alt="\kappa_{\textrm{max}}=0.5/d_{\textrm{min}}"/> (As suggested in Asten and Henstridge [1984]).</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">The resolution limits are computed as <img class="math" src="_images/math/0919db337158bac70c4ffff779331fff201cce35.png" alt="\kappa_{\textrm{max}}=c_1/d_{\textrm{min}}"/> and <img class="math" src="_images/math/d1a85290519b2597ea345e3ffd0c2608494e6bb4.png" alt="\kappa_{\textrm{min}}=c_2/d_{\textrm{max}}"/>. The value of <img class="math" src="_images/math/3b3656365ff2748ee55de15a942b63693cb47dae.png" alt="c_1"/> and <img class="math" src="_images/math/5081ba4156b5c83e0ad11d0dbf1ddd83fa988929.png" alt="c_2"/> can be changed in the file <code class="docutils literal"><span class="pre">wdSettings.py</span></code>.</p>
+</div>
+<p>Equivalently, in velocity at the frequency <img class="math" src="_images/math/0001d02b63ede2fe3219e05a7cd09c82ae6298b6.png" alt="f"/> the limits are <img class="math" src="_images/math/9e92b1b63c76c0afa79c6e86b1010f89d6da6bf7.png" alt="v_{\textrm{min}}=f/k_{\textrm{max}}"/> and <img class="math" src="_images/math/d55e0165b45ab6b0ccdcf93260b27aefa8a352a0.png" alt="v_{\textrm{max}}=f/k_{\textrm{min}}"/>.</p>
+<p>The columns of <code class="docutils literal"><span class="pre">ArrayResolutionLimits.csv</span></code> have the following meaning</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="19%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column name</th>
+<th class="head">Unit</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Frequency</td>
+<td>Hertz</td>
+<td><div class="first last line-block">
+<div class="line">Frequency <img class="math" src="_images/math/0001d02b63ede2fe3219e05a7cd09c82ae6298b6.png" alt="f"/></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td>Kmin</td>
+<td>1/meter</td>
+<td><div class="first last line-block">
+<div class="line">Smallest resolvable wavenumber <img class="math" src="_images/math/165e8d54ddff2b41b0234848629dee6cede35296.png" alt="\kappa_{\textrm{min}}"/></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td>Kmax</td>
+<td>1/meter</td>
+<td><div class="first last line-block">
+<div class="line">Largest resolvable wavenumber <img class="math" src="_images/math/76462a854c53f79bd3e72c1e865f87eca68d0378.png" alt="\kappa_{\textrm{max}}"/></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td>Vmin</td>
+<td>meter/second</td>
+<td><div class="first last line-block">
+<div class="line">Smallest resolvable velocity <img class="math" src="_images/math/87e908ab1839ab316b2c04ef39dba48deb6ed9ab.png" alt="v_{\textrm{min}}"/></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td>Vmax</td>
+<td>meter/second</td>
+<td><div class="first last line-block">
+<div class="line">Largest resolvable velocity <img class="math" src="_images/math/71bf46d61e3b923df30f2c4894c7881023803c95.png" alt="v_{\textrm{max}}"/></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="array-layout">
+<h3><a class="toc-backref" href="#contents">Array Layout</a><a class="headerlink" href="#array-layout" title="Permalink to this headline">¶</a></h3>
+<p>The file <code class="docutils literal"><span class="pre">ArrayLayout.csv</span></code> contains the coordinates of the sensors.</p>
+<p>The columns of <code class="docutils literal"><span class="pre">ArrayLayout.csv</span></code> have the following meaning</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="19%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column name</th>
+<th class="head">Unit</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Easting</td>
+<td>meter</td>
+<td><div class="first last line-block">
+<div class="line"><br /></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td>Northing</td>
+<td>meter</td>
+<td><div class="first last line-block">
+<div class="line"><br /></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td>Elevation</td>
+<td>meter</td>
+<td><div class="first last line-block">
+<div class="line"><br /></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="log-file">
+<h3><a class="toc-backref" href="#contents">Log file</a><a class="headerlink" href="#log-file" title="Permalink to this headline">¶</a></h3>
+<p>The file <code class="docutils literal"><span class="pre">WaveDec.log</span></code> is saved in the same directory specified by <code class="docutils literal"><span class="pre">OUTPUT</span></code>. It contains all the output printed to screen from WaveDec.</p>
+</div>
+</div>
+<div class="section" id="analysis-of-the-output-files">
+<h2><a class="toc-backref" href="#contents">Analysis of the output files</a><a class="headerlink" href="#analysis-of-the-output-files" title="Permalink to this headline">¶</a></h2>
+<p>The script <code class="docutils literal"><span class="pre">wdPicker.py</span></code> allows to visualize and perform some analysis of WaveDec output files. See <a class="reference internal" href="userguide_wdPicker.html"><em>User&#8217;s guide: wdPicker</em></a> for details.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">User&#8217;s guide: WaveDec</a><ul>
+<li><a class="reference internal" href="#input-files">Input files</a><ul>
+<li><a class="reference internal" href="#configuration-file">Configuration file</a></li>
+<li><a class="reference internal" href="#data">Data</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#processing">Processing</a><ul>
+<li><a class="reference internal" href="#model-selection-love-wave-rayleigh-wave-or-nothing">Model selection: Love wave, Rayleigh wave, or nothing?</a></li>
+<li><a class="reference internal" href="#speeding-it-up">Speeding it up</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#output-files">Output files</a><ul>
+<li><a class="reference internal" href="#estimated-wavefield-parameters">Estimated wavefield parameters</a></li>
+<li><a class="reference internal" href="#resolution-limits">Resolution limits</a></li>
+<li><a class="reference internal" href="#array-layout">Array Layout</a></li>
+<li><a class="reference internal" href="#log-file">Log file</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#analysis-of-the-output-files">Analysis of the output files</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="quickstart.html"
+                        title="previous chapter">A very quick start</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="userguide_WaveDecActive.html"
+                        title="next chapter">User&#8217;s guide: WaveDecActive</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="userguide_WaveDecActive.html" title="User’s guide: WaveDecActive"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="quickstart.html" title="A very quick start"
+             >previous</a> |</li>
+<li><a href="http://mercalli.ethz.ch/~marra/">Home</a> &raquo; <a href="index.html">WaveDec  documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      Last updated on Jul 15, 2017.
+    <br>
+        &copy; Copyright 2017, Stefano Maranò.
+<!-- <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png"/></a>-->
+ This documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ?
+"https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost +
+"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4477781-2");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+  </body>
+</html>

@@ -1,0 +1,943 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Code Documentation &mdash; WaveDec  documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="WaveDec  documentation" href="index.html" />
+    <link rel="prev" title="Scientific publications related to WaveDec" href="references.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="references.html" title="Scientific publications related to WaveDec"
+             accesskey="P">previous</a> |</li>
+<li><a href="http://mercalli.ethz.ch/~marra/">Home</a> &raquo; <a href="index.html">WaveDec  documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="code-documentation">
+<h1><a class="toc-backref" href="#id1">Code Documentation</a><a class="headerlink" href="#code-documentation" title="Permalink to this headline">¶</a></h1>
+<p>In this page the most important functions of WaveDec are documented. You will find this page interesting if you wish to understand or modify the functioning of WaveDec.</p>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#code-documentation" id="id1">Code Documentation</a><ul>
+<li><a class="reference internal" href="#reading-of-input-files" id="id2">Reading of input files</a></li>
+<li><a class="reference internal" href="#synthetic-wavefield-generation" id="id3">Synthetic wavefield generation</a></li>
+<li><a class="reference internal" href="#estimation-routines" id="id4">Estimation routines</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="reading-of-input-files">
+<h2><a class="toc-backref" href="#id2">Reading of input files</a><a class="headerlink" href="#reading-of-input-files" title="Permalink to this headline">¶</a></h2>
+<p>Some code to read data and metadata from SAC files.</p>
+<span class="target" id="module-ReadSAC"></span><p>Routines for reading SAC files</p>
+<dl class="function">
+<dt id="ReadSAC.readSac">
+<code class="descclassname">ReadSAC.</code><code class="descname">readSac</code><span class="sig-paren">(</span><em>sacFile</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ReadSAC.html#readSac"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ReadSAC.readSac" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a single SAC file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sacFile</strong> : string</p>
+<blockquote>
+<div><p>Path to the SAC file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>data</strong> : float array</p>
+<blockquote>
+<div><p>Data, amplitudes</p>
+</div></blockquote>
+<p><strong>t</strong> : float array</p>
+<blockquote>
+<div><p>Time axis</p>
+</div></blockquote>
+<p><strong>sachead</strong> : float array</p>
+<blockquote class="last">
+<div><p>SAC header</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ReadSAC.readSacDir">
+<code class="descclassname">ReadSAC.</code><code class="descname">readSacDir</code><span class="sig-paren">(</span><em>sac_dir</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ReadSAC.html#readSacDir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ReadSAC.readSacDir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load SAC files from a folder.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sac_dir</strong> : string</p>
+<blockquote>
+<div><p>Path to the folder containing the SAC files.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>y</strong> : 2d float array</p>
+<blockquote>
+<div><p>It is an array of size (K, L). Each column contains the signal at the l-th location.</p>
+</div></blockquote>
+<p><strong>info</strong> : 2d array</p>
+<blockquote>
+<div><p>An array containing information about sensor location and channels.
+It has L rows, where L is the number of channels.
+Each rows has the following form:</p>
+<blockquote>
+<div><p>pos_x, pos_y, pos_z, cmp, Ts</p>
+</div></blockquote>
+<p>where the first three fields are the position of the sensor in [m].
+cmp is the component code.
+Ts is the sampling time as read from the SAC file.</p>
+</div></blockquote>
+<p><strong>Ts</strong> : float</p>
+<blockquote class="last">
+<div><p>Sampling time in [s].</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="synthetic-wavefield-generation">
+<h2><a class="toc-backref" href="#id3">Synthetic wavefield generation</a><a class="headerlink" href="#synthetic-wavefield-generation" title="Permalink to this headline">¶</a></h2>
+<p>These functions are used to generate monochromatic waves. Mostly useful for code testing.</p>
+<span class="target" id="module-SyntheticWavefield"></span><p>Routines for generating syntetic wavefield</p>
+<dl class="function">
+<dt id="SyntheticWavefield.logLikelihoodIID">
+<code class="descclassname">SyntheticWavefield.</code><code class="descname">logLikelihoodIID</code><span class="sig-paren">(</span><em>y</em>, <em>x</em>, <em>sigma2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SyntheticWavefield.html#logLikelihoodIID"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SyntheticWavefield.logLikelihoodIID" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the log-likelihood of the observed signal y</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>y</strong> : 2d float array</p>
+<blockquote>
+<div><p>Noisy signal</p>
+</div></blockquote>
+<p><strong>x</strong> : 2d float array</p>
+<blockquote>
+<div><p>The noisless signal.</p>
+</div></blockquote>
+<p><strong>sigma2</strong> : float</p>
+<blockquote>
+<div><p>Noise variance. Can be either a scalar (ie, equal noise variance on all channels)
+or a vector of length L (ie, specifies the different variance on each channel)</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>LL</strong> : float</p>
+<blockquote class="last">
+<div><p>The log-likelihood of the observations y.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="SyntheticWavefield.syntheticAWGN">
+<code class="descclassname">SyntheticWavefield.</code><code class="descname">syntheticAWGN</code><span class="sig-paren">(</span><em>sigma2</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SyntheticWavefield.html#syntheticAWGN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SyntheticWavefield.syntheticAWGN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add white Gaussian noise to a signal.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sigma2</strong> : float</p>
+<blockquote>
+<div><p>Noise variance.</p>
+</div></blockquote>
+<p><strong>y</strong> : 2d float array</p>
+<blockquote>
+<div><p>The noisless signal.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>y</strong> : 2d float array</p>
+<blockquote class="last">
+<div><p>The noisy signal.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="SyntheticWavefield.syntheticCircularRayleighWave">
+<code class="descclassname">SyntheticWavefield.</code><code class="descname">syntheticCircularRayleighWave</code><span class="sig-paren">(</span><em>Ts</em>, <em>K</em>, <em>info</em>, <em>Amplitude</em>, <em>Phase</em>, <em>Wavenumber</em>, <em>EllipticityAngle</em>, <em>Frequency</em>, <em>SourcePosition</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SyntheticWavefield.html#syntheticCircularRayleighWave"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SyntheticWavefield.syntheticCircularRayleighWave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a monochromatic circular Rayleigh wave.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="SyntheticWavefield.syntheticLoveWave">
+<code class="descclassname">SyntheticWavefield.</code><code class="descname">syntheticLoveWave</code><span class="sig-paren">(</span><em>Ts</em>, <em>K</em>, <em>info</em>, <em>Amplitude</em>, <em>Phase</em>, <em>Wavenumber</em>, <em>Azimuth</em>, <em>Frequency</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SyntheticWavefield.html#syntheticLoveWave"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SyntheticWavefield.syntheticLoveWave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a monochromatic Love wave.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>Ts</strong> : float</p>
+<blockquote>
+<div><p>The sampling time in [s]</p>
+</div></blockquote>
+<p><strong>K</strong> : int</p>
+<blockquote>
+<div><p>Number of samples for each channel. Total duration = Ts*K</p>
+</div></blockquote>
+<p><strong>info</strong> : 2d array</p>
+<blockquote>
+<div><p>Contains information about the sensor positions and channels.</p>
+</div></blockquote>
+<p><strong>Amplitude</strong> : float</p>
+<blockquote>
+<div><p>Wave amplitude in arbitrary units.</p>
+</div></blockquote>
+<p><strong>Phase</strong> : float</p>
+<blockquote>
+<div><p>Wave phase at the origin.</p>
+</div></blockquote>
+<p><strong>Wavenumber</strong> : float</p>
+<blockquote>
+<div><p>Wavenumber in [1/m] (not in [rad/m]!)</p>
+</div></blockquote>
+<p><strong>Azimuth</strong> : float</p>
+<blockquote>
+<div><p>Wave azimuth in [rad]. The wavevector points in the direction of propagation.
+Wavevector = Wavenumber*[cos(Azimuth), sin(Azimuth)]</p>
+</div></blockquote>
+<p><strong>Frequency</strong> : float</p>
+<blockquote>
+<div><p>Temporal frequency of the wave in [Hz].</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>y</strong> : 2d float array</p>
+<blockquote class="last">
+<div><p>It is an array of size (K, L). Each column contains the signal at the l-th location.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="SyntheticWavefield.syntheticRayleighWave">
+<code class="descclassname">SyntheticWavefield.</code><code class="descname">syntheticRayleighWave</code><span class="sig-paren">(</span><em>Ts</em>, <em>K</em>, <em>info</em>, <em>Amplitude</em>, <em>Phase</em>, <em>Wavenumber</em>, <em>Azimuth</em>, <em>EllipticityAngle</em>, <em>Frequency</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SyntheticWavefield.html#syntheticRayleighWave"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#SyntheticWavefield.syntheticRayleighWave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a monochromatic Rayleigh wave.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>Ts</strong> : float</p>
+<blockquote>
+<div><p>The sampling time in [s]</p>
+</div></blockquote>
+<p><strong>K</strong> : int</p>
+<blockquote>
+<div><p>Number of samples for each channel. Total duration = Ts*K</p>
+</div></blockquote>
+<p><strong>info</strong> : 2d array</p>
+<blockquote>
+<div><p>Contains information about the sensor positions and channels.</p>
+</div></blockquote>
+<p><strong>Amplitude</strong> : float</p>
+<blockquote>
+<div><p>Wave amplitude in arbitrary units.</p>
+</div></blockquote>
+<p><strong>Phase</strong> : float</p>
+<blockquote>
+<div><p>Wave phase at the origin.</p>
+</div></blockquote>
+<p><strong>Wavenumber</strong> : float</p>
+<blockquote>
+<div><p>Wavenumber in [1/m] (not in [rad/m]!)</p>
+</div></blockquote>
+<p><strong>Azimuth</strong> : float</p>
+<blockquote>
+<div><p>Wave azimuth in [rad]. The wavevector points in the direction of propagation.
+Wavevector = Wavenumber*[cos(Azimuth), sin(Azimuth)]</p>
+</div></blockquote>
+<p><strong>EllipticityAngle</strong> : float</p>
+<blockquote>
+<div><p>Ellipticity angle of the Rayleigh wave in [rad].
+The ellipticity angle is a value in the interval [-pi/2, pi/2]</p>
+</div></blockquote>
+<p><strong>Frequency</strong> : float</p>
+<blockquote>
+<div><p>Temporal frequency of the wave in [Hz].</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>y</strong> : 2d float array</p>
+<blockquote class="last">
+<div><p>It is an array of size (K, L). Each column contains the signal at the l-th location.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="estimation-routines">
+<h2><a class="toc-backref" href="#id4">Estimation routines</a><a class="headerlink" href="#estimation-routines" title="Permalink to this headline">¶</a></h2>
+<p>Here is the code used for several estimation tasks.</p>
+<span class="target" id="module-EstimationRoutines"></span><p>Here are estimation routines used in WaveDec</p>
+<dl class="function">
+<dt id="EstimationRoutines.bwMessages">
+<code class="descclassname">EstimationRoutines.</code><code class="descname">bwMessages</code><span class="sig-paren">(</span><em>y</em>, <em>Ts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/EstimationRoutines.html#bwMessages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EstimationRoutines.bwMessages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute sufficient statistics, assuming unitary variance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>y</strong> : 2d float array</p>
+<blockquote>
+<div><p>It is an array of size (K, L). Each column contains the signal at the l-th location.</p>
+</div></blockquote>
+<p><strong>Ts</strong> : float</p>
+<blockquote>
+<div><p>The sampling time in [s]</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Sm_bw</strong> : float array</p>
+<blockquote>
+<div><p>It is an array of size (2, L). Each column refers to the the signal at the l-th location.
+Contains the mean vector of the message S.</p>
+</div></blockquote>
+<p><strong>Sw_bw</strong> : float array</p>
+<blockquote>
+<div><p>It is an array of size (2, 2, L). Each page refers to the the signal at the l-th location.
+Contains the precision matrix of the message S.</p>
+</div></blockquote>
+<p><strong>Swm_bw</strong> : float array</p>
+<blockquote class="last">
+<div><p>It is an array of size (2, L). Each column refers to the the signal at the l-th location.
+Contains the weighted mean vector of the message S.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="EstimationRoutines.decomposeWavefield">
+<code class="descclassname">EstimationRoutines.</code><code class="descname">decomposeWavefield</code><span class="sig-paren">(</span><em>conn</em>, <em>y</em>, <em>WindowId</em>, <em>Ts</em>, <em>Fvec_ndx</em>, <em>Kmax</em>, <em>Kstep</em>, <em>Estep</em>, <em>Vmin</em>, <em>WavesToModel</em>, <em>MaxWaves</em>, <em>MaxIterations</em>, <em>ArrayInfo</em>, <em>Gamma</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/EstimationRoutines.html#decomposeWavefield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EstimationRoutines.decomposeWavefield" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit different wave types at several frequencies.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>conn :</strong></p>
+<blockquote>
+<div><p>SQL database connection</p>
+</div></blockquote>
+<p><strong>y</strong> : float array</p>
+<blockquote>
+<div><p>input signal</p>
+</div></blockquote>
+<p><strong>WindowId</strong> : int</p>
+<blockquote>
+<div><p>Unique indentifier of the window</p>
+</div></blockquote>
+<p><strong>Ts</strong> : float</p>
+<blockquote>
+<div><p>Sampling time [s]</p>
+</div></blockquote>
+<p><strong>Fvec_ndx</strong> : int array</p>
+<blockquote>
+<div><p>...</p>
+</div></blockquote>
+<p><strong>Kmax</strong> : float</p>
+<blockquote>
+<div><p>Largest wavenumber [1/m] to analyze</p>
+</div></blockquote>
+<p><strong>Kstep</strong> : float</p>
+<blockquote>
+<div><p>Grid step in the wavenumber plane [1/m]</p>
+</div></blockquote>
+<p><strong>Vmin</strong> : float</p>
+<blockquote>
+<div><p>Smallest velocity [m/s] to analyze</p>
+</div></blockquote>
+<p><strong>WavesToModel :</strong></p>
+<blockquote>
+<div><p>Describe which wave types should be fitted</p>
+</div></blockquote>
+<p><strong>MaxWaves</strong> : int</p>
+<blockquote>
+<div><p>Maximum number of waves to model at each frequency in the time window</p>
+</div></blockquote>
+<p><strong>MaxIterations</strong> : int</p>
+<blockquote>
+<div><p>Maximum number of interations. In each iteration parameters of each wave are re-estimated.</p>
+</div></blockquote>
+<p><strong>ArrayInfo</strong> : float array</p>
+<blockquote>
+<div><p>An array containing information about sensor location and channels.
+It has L rows, where L is the number of channels.
+Each rows has the following form:</p>
+<blockquote>
+<div><p>pos_x, pos_y, pos_z, cmp, Ts</p>
+</div></blockquote>
+<p>where the first three fields are the position of the sensor in [m].
+cmp is the component code.
+Ts is the sampling time as read from the SAC file.</p>
+</div></blockquote>
+<p><strong>Gamma</strong> : float</p>
+<blockquote class="last">
+<div><p>Controls model complexity. (0 for pure ML, 1 for BIC, other values for intermediate strategies)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="EstimationRoutines.estimateNoise">
+<code class="descclassname">EstimationRoutines.</code><code class="descname">estimateNoise</code><span class="sig-paren">(</span><em>Sm_bw</em>, <em>Sm_fw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/EstimationRoutines.html#estimateNoise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EstimationRoutines.estimateNoise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate noise parameters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>Sm_bw</strong> : float array</p>
+<blockquote>
+<div><p>Sufficient statistics from measurements</p>
+</div></blockquote>
+<p><strong>Sm_fw</strong> : float array</p>
+<blockquote>
+<div><p>Wavefield explained by modeled waves</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>sigma2</strong> : float array</p>
+<blockquote>
+<div><p>Noise variance estimated from residual signal. One dimensional array of length L.</p>
+</div></blockquote>
+<p><strong>SlnGamma_bw</strong> : float array</p>
+<blockquote class="last">
+<div><p>Array of gamma scale factors computed with the estimated noise variance</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="EstimationRoutines.fitLoveWave">
+<code class="descclassname">EstimationRoutines.</code><code class="descname">fitLoveWave</code><span class="sig-paren">(</span><em>X_grid</em>, <em>Sm_bw</em>, <em>Sw_bw</em>, <em>ff</em>, <em>L</em>, <em>K</em>, <em>Kmax</em>, <em>ArrayInfo</em>, <em>Gamma</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/EstimationRoutines.html#fitLoveWave"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EstimationRoutines.fitLoveWave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the maximum likelihood fit a monochromatic Love wave</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X_grid</strong> : float array</p>
+<blockquote>
+<div><p>Array of size (2,N). Description of N points to evaluate likelihoodfunction. First row is the wavenumber along the x axes. Second row the wavenumber along the y axes.</p>
+</div></blockquote>
+<p><strong>Sw_bw, Swm_bw</strong> : float array</p>
+<blockquote>
+<div><p>sufficient statistics</p>
+</div></blockquote>
+<p><strong>ff</strong> : int</p>
+<blockquote>
+<div><p>index of the frequency of interest</p>
+</div></blockquote>
+<p><strong>L</strong> : int</p>
+<blockquote>
+<div><p>Number of channels</p>
+</div></blockquote>
+<p><strong>K</strong> : int</p>
+<blockquote>
+<div><p>number of samples</p>
+</div></blockquote>
+<p><strong>Kmax</strong> : float</p>
+<blockquote>
+<div><p>Largest wavenumber [1/m] to analyze</p>
+</div></blockquote>
+<p><strong>ArrayInfo</strong> : float array</p>
+<blockquote>
+<div><p>An array containing information about sensor location and channels.
+It has L rows, where L is the number of channels.
+Each rows has the following form:</p>
+<blockquote>
+<div><p>pos_x, pos_y, pos_z, cmp, Ts</p>
+</div></blockquote>
+<p>where the first three fields are the position of the sensor in [m].
+cmp is the component code.
+Ts is the sampling time as read from the SAC file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>BIC</strong> : float</p>
+<blockquote>
+<div><p>Value of the Bayesian information criterion</p>
+</div></blockquote>
+<p><strong>Sm_fw</strong> : float array</p>
+<blockquote>
+<div><p>Wavefield generated by the estimated wave</p>
+</div></blockquote>
+<p><strong>Amplitude</strong> : float</p>
+<blockquote>
+<div><p>Wave amplitude</p>
+</div></blockquote>
+<p><strong>Phase</strong> : float</p>
+<blockquote>
+<div><p>Wave phase</p>
+</div></blockquote>
+<p><strong>X_ML</strong> : float array</p>
+<blockquote class="last">
+<div><p>Array of size (2,1). The Maximum Likelihood estimate of the wave parameters.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="EstimationRoutines.fitNoise">
+<code class="descclassname">EstimationRoutines.</code><code class="descname">fitNoise</code><span class="sig-paren">(</span><em>Sm_bw</em>, <em>L</em>, <em>K</em>, <em>Gamma</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/EstimationRoutines.html#fitNoise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EstimationRoutines.fitNoise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate noise parameters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>Sm_bw</strong> : float array</p>
+<blockquote>
+<div><p>Sufficient statistics from measurements</p>
+</div></blockquote>
+<p><strong>Sm_fw</strong> : float array</p>
+<blockquote>
+<div><p>Wavefield explained by modeled waves</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>BIC</strong> : float</p>
+<blockquote>
+<div><p>Value of the Bayesian information criterion</p>
+</div></blockquote>
+<p><strong>sigma2_ML</strong> : float array</p>
+<blockquote class="last">
+<div><p>Noise variance estimated from residual signal. One dimensional array of length L.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="EstimationRoutines.fwMessages_LoveWave">
+<code class="descclassname">EstimationRoutines.</code><code class="descname">fwMessages_LoveWave</code><span class="sig-paren">(</span><em>X_ML</em>, <em>Sw_bw</em>, <em>Swm_bw</em>, <em>SlnGamma_bw</em>, <em>ArrayInfo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/EstimationRoutines.html#fwMessages_LoveWave"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EstimationRoutines.fwMessages_LoveWave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the estimated wavefield of a Love wave.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X_ML</strong> : float array</p>
+<blockquote>
+<div><p>Array of size (2,1). The Maximum Likelihood estimate of the wave parameters.</p>
+</div></blockquote>
+<p><strong>Sw_bw, Swm_bw, SlnGamma_bw</strong> : float array</p>
+<blockquote>
+<div><p>sufficient statistics</p>
+</div></blockquote>
+<p><strong>ArrayInfo</strong> : float array</p>
+<blockquote>
+<div><p>An array containing information about sensor location and channels.
+It has L rows, where L is the number of channels.
+Each rows has the following form:</p>
+<blockquote>
+<div><p>pos_x, pos_y, pos_z, cmp, Ts</p>
+</div></blockquote>
+<p>where the first three fields are the position of the sensor in [m].
+cmp is the component code.
+Ts is the sampling time as read from the SAC file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Sm_fw</strong> : float array</p>
+<blockquote>
+<div><p>Wavefield</p>
+</div></blockquote>
+<p><strong>Amplitude</strong> : float</p>
+<blockquote>
+<div><p>Wave amplitude</p>
+</div></blockquote>
+<p><strong>Phase</strong> : float</p>
+<blockquote>
+<div><p>Wave phase</p>
+</div></blockquote>
+<p><strong>LL</strong> : float</p>
+<blockquote class="last">
+<div><p>Model loglikelihood</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="EstimationRoutines.grad_negLL_LoveWave">
+<code class="descclassname">EstimationRoutines.</code><code class="descname">grad_negLL_LoveWave</code><span class="sig-paren">(</span><em>X_grid</em>, <em>Sw_bw</em>, <em>Swm_bw</em>, <em>SlnGamma_bw</em>, <em>ArrayInfo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/EstimationRoutines.html#grad_negLL_LoveWave"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EstimationRoutines.grad_negLL_LoveWave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the gradient of the loglikelihood of a Love wave</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X_grid</strong> : float array</p>
+<blockquote>
+<div><p>Array of size (2,1). Description of N points to evaluate likelihoodfunction. First row is the wavenumber along the x axes. Second row the wavenumber along the y axes.</p>
+</div></blockquote>
+<p><strong>Sw_bw, Swm_bw, SlnGamma_bw</strong> : float array</p>
+<blockquote>
+<div><p>sufficient statistics</p>
+</div></blockquote>
+<p><strong>ArrayInfo</strong> : float array</p>
+<blockquote>
+<div><p>An array containing information about sensor location and channels.
+It has L rows, where L is the number of channels.
+Each rows has the following form:</p>
+<blockquote>
+<div><p>pos_x, pos_y, pos_z, cmp, Ts</p>
+</div></blockquote>
+<p>where the first three fields are the position of the sensor in [m].
+cmp is the component code.
+Ts is the sampling time as read from the SAC file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>grad</strong> : float array</p>
+<blockquote class="last">
+<div><p>The gradient of the loglikelihood.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="EstimationRoutines.grad_negLL_RayleighWave">
+<code class="descclassname">EstimationRoutines.</code><code class="descname">grad_negLL_RayleighWave</code><span class="sig-paren">(</span><em>X_grid</em>, <em>Sw_bw</em>, <em>Swm_bw</em>, <em>SlnGamma_bw</em>, <em>ArrayInfo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/EstimationRoutines.html#grad_negLL_RayleighWave"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EstimationRoutines.grad_negLL_RayleighWave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the gradient of the loglikelihood of a Rayleigh wave</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X_grid</strong> : float array</p>
+<blockquote>
+<div><p>Array of size (3,1). Description of N points to evaluate likelihoodfunction. First row is the wavenumber along the x axes. Second row the wavenumber along the y axes. Third row the ellipticity angle.</p>
+</div></blockquote>
+<p><strong>Sw_bw, Swm_bw, SlnGamma_bw</strong> : float array</p>
+<blockquote>
+<div><p>sufficient statistics</p>
+</div></blockquote>
+<p><strong>ArrayInfo</strong> : float array</p>
+<blockquote>
+<div><p>An array containing information about sensor location and channels.
+It has L rows, where L is the number of channels.
+Each rows has the following form:</p>
+<blockquote>
+<div><p>pos_x, pos_y, pos_z, cmp, Ts</p>
+</div></blockquote>
+<p>where the first three fields are the position of the sensor in [m].
+cmp is the component code.
+Ts is the sampling time as read from the SAC file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>grad</strong> : float array</p>
+<blockquote class="last">
+<div><p>The gradient of the loglikelihood.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="EstimationRoutines.grad_negLL_VerticalWave">
+<code class="descclassname">EstimationRoutines.</code><code class="descname">grad_negLL_VerticalWave</code><span class="sig-paren">(</span><em>X_grid</em>, <em>Sw_bw</em>, <em>Swm_bw</em>, <em>SlnGamma_bw</em>, <em>ArrayInfo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/EstimationRoutines.html#grad_negLL_VerticalWave"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EstimationRoutines.grad_negLL_VerticalWave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the gradient of the loglikelihood of a plane wave (vertical component only)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X_grid</strong> : float array</p>
+<blockquote>
+<div><p>Array of size (2,N). Description of N points to evaluate likelihoodfunction. First row is the wavenumber along the x axes. Second row the wavenumber along the y axes.</p>
+</div></blockquote>
+<p><strong>Sw_bw, Swm_bw, SlnGamma_bw :</strong></p>
+<blockquote>
+<div><p>sufficient statistics</p>
+</div></blockquote>
+<p><strong>ArrayInfo</strong> : float array</p>
+<blockquote>
+<div><p>An array containing information about sensor location and channels.
+It has L rows, where L is the number of channels.
+Each rows has the following form:</p>
+<blockquote>
+<div><p>pos_x, pos_y, pos_z, cmp, Ts</p>
+</div></blockquote>
+<p>where the first three fields are the position of the sensor in [m].
+cmp is the component code.
+Ts is the sampling time as read from the SAC file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>grad</strong> : float array</p>
+<blockquote class="last">
+<div><p>The gradient.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="EstimationRoutines.negLL_LoveWave">
+<code class="descclassname">EstimationRoutines.</code><code class="descname">negLL_LoveWave</code><span class="sig-paren">(</span><em>X_grid</em>, <em>Sw_bw</em>, <em>Swm_bw</em>, <em>SlnGamma_bw</em>, <em>ArrayInfo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/EstimationRoutines.html#negLL_LoveWave"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EstimationRoutines.negLL_LoveWave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the likelihood of a Love wave</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X_grid</strong> : float array</p>
+<blockquote>
+<div><p>Array of size (2,N). Description of N points to evaluate likelihoodfunction. First row is the wavenumber along the x axes. Second row the wavenumber along the y axes.</p>
+</div></blockquote>
+<p><strong>Sw_bw, Swm_bw, SlnGamma_bw</strong> : float array</p>
+<blockquote>
+<div><p>sufficient statistics</p>
+</div></blockquote>
+<p><strong>ArrayInfo</strong> : float array</p>
+<blockquote>
+<div><p>An array containing information about sensor location and channels.
+It has L rows, where L is the number of channels.
+Each rows has the following form:</p>
+<blockquote>
+<div><p>pos_x, pos_y, pos_z, cmp, Ts</p>
+</div></blockquote>
+<p>where the first three fields are the position of the sensor in [m].
+cmp is the component code.
+Ts is the sampling time as read from the SAC file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>negLogLikelihood</strong> : float array</p>
+<blockquote class="last">
+<div><p>A one dimensional array of N elements with the value of minus the log-likelihood.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="EstimationRoutines.negLL_RayleighWave">
+<code class="descclassname">EstimationRoutines.</code><code class="descname">negLL_RayleighWave</code><span class="sig-paren">(</span><em>X_grid</em>, <em>Sw_bw</em>, <em>Swm_bw</em>, <em>SlnGamma_bw</em>, <em>ArrayInfo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/EstimationRoutines.html#negLL_RayleighWave"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EstimationRoutines.negLL_RayleighWave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the loglikelihood of a Rayleigh wave</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X_grid</strong> : float array</p>
+<blockquote>
+<div><p>Array of size (3,N). Description of N points to evaluate likelihoodfunction. First row is the wavenumber along the x axes. Second row the wavenumber along the y axes. Third row the ellipticity angle.</p>
+</div></blockquote>
+<p><strong>Sw_bw, Swm_bw, SlnGamma_bw</strong> : float array</p>
+<blockquote>
+<div><p>sufficient statistics</p>
+</div></blockquote>
+<p><strong>ArrayInfo</strong> : float array</p>
+<blockquote>
+<div><p>An array containing information about sensor location and channels.
+It has L rows, where L is the number of channels.
+Each rows has the following form:</p>
+<blockquote>
+<div><p>pos_x, pos_y, pos_z, cmp, Ts</p>
+</div></blockquote>
+<p>where the first three fields are the position of the sensor in [m].
+cmp is the component code.
+Ts is the sampling time as read from the SAC file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>negLogLikelihood</strong> : float array</p>
+<blockquote class="last">
+<div><p>A one dimensional array of N elements with the value of minus the log-likelihood.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="EstimationRoutines.negLL_VerticalWave">
+<code class="descclassname">EstimationRoutines.</code><code class="descname">negLL_VerticalWave</code><span class="sig-paren">(</span><em>X_grid</em>, <em>Sw_bw</em>, <em>Swm_bw</em>, <em>SlnGamma_bw</em>, <em>ArrayInfo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/EstimationRoutines.html#negLL_VerticalWave"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EstimationRoutines.negLL_VerticalWave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the loglikelihood of a plane wave (vertical component only)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X_grid</strong> : float array</p>
+<blockquote>
+<div><p>Array of size (2,N). Description of N points to evaluate likelihoodfunction. First row is the wavenumber along the x axes. Second row the wavenumber along the y axes.</p>
+</div></blockquote>
+<p><strong>Sw_bw, Swm_bw, SlnGamma_bw :</strong></p>
+<blockquote>
+<div><p>sufficient statistics</p>
+</div></blockquote>
+<p><strong>ArrayInfo</strong> : float array</p>
+<blockquote>
+<div><p>An array containing information about sensor location and channels.
+It has L rows, where L is the number of channels.
+Each rows has the following form:</p>
+<blockquote>
+<div><p>pos_x, pos_y, pos_z, cmp, Ts</p>
+</div></blockquote>
+<p>where the first three fields are the position of the sensor in [m].
+cmp is the component code.
+Ts is the sampling time as read from the SAC file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>negLogLikelihood</strong> : float array</p>
+<blockquote class="last">
+<div><p>A one dimensional array of N elements with the value of minus the log-likelihood.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Code Documentation</a><ul>
+<li><a class="reference internal" href="#reading-of-input-files">Reading of input files</a></li>
+<li><a class="reference internal" href="#synthetic-wavefield-generation">Synthetic wavefield generation</a></li>
+<li><a class="reference internal" href="#estimation-routines">Estimation routines</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="references.html"
+                        title="previous chapter">Scientific publications related to WaveDec</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="references.html" title="Scientific publications related to WaveDec"
+             >previous</a> |</li>
+<li><a href="http://mercalli.ethz.ch/~marra/">Home</a> &raquo; <a href="index.html">WaveDec  documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      Last updated on Jul 15, 2017.
+    <br>
+        &copy; Copyright 2017, Stefano Maranò.
+<!-- <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png"/></a>-->
+ This documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ?
+"https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost +
+"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4477781-2");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+  </body>
+</html>
