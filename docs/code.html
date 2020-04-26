@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Code Documentation &#8212; WaveDec  documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Scientific publications related to WaveDec" href="references.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="references.html" title="Scientific publications related to WaveDec"
+             accesskey="P">previous</a> |</li>
+<li><a href="https://github.com/StefanoMarano">Home</a> &#187; <a href="index.html">WaveDec  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="code-documentation">
+<h1><a class="toc-backref" href="#id1">Code Documentation</a><a class="headerlink" href="#code-documentation" title="Permalink to this headline">¶</a></h1>
+<p>In this page the most important functions of WaveDec are documented. You will find this page interesting if you wish to understand or modify the functioning of WaveDec.</p>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#code-documentation" id="id1">Code Documentation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#reading-of-input-files" id="id2">Reading of input files</a></p></li>
+<li><p><a class="reference internal" href="#synthetic-wavefield-generation" id="id3">Synthetic wavefield generation</a></p></li>
+<li><p><a class="reference internal" href="#estimation-routines" id="id4">Estimation routines</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="reading-of-input-files">
+<h2><a class="toc-backref" href="#id2">Reading of input files</a><a class="headerlink" href="#reading-of-input-files" title="Permalink to this headline">¶</a></h2>
+<p>Some code to read data and metadata from SAC files.</p>
+<span class="target" id="module-ReadSAC"></span><p>Routines for reading SAC files</p>
+<dl class="function">
+<dt id="ReadSAC.readSac">
+<code class="sig-prename descclassname">ReadSAC.</code><code class="sig-name descname">readSac</code><span class="sig-paren">(</span><em class="sig-param">sacFile</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ReadSAC.html#readSac"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ReadSAC.readSac" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a single SAC file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>sacFile</strong><span class="classifier">string</span></dt><dd><p>Path to the SAC file.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">float array</span></dt><dd><p>Data, amplitudes</p>
+</dd>
+<dt><strong>t</strong><span class="classifier">float array</span></dt><dd><p>Time axis</p>
+</dd>
+<dt><strong>sachead</strong><span class="classifier">float array</span></dt><dd><p>SAC header</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ReadSAC.readSacDir">
+<code class="sig-prename descclassname">ReadSAC.</code><code class="sig-name descname">readSacDir</code><span class="sig-paren">(</span><em class="sig-param">sac_dir</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ReadSAC.html#readSacDir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ReadSAC.readSacDir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load SAC files from a folder.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>sac_dir</strong><span class="classifier">string</span></dt><dd><p>Path to the folder containing the SAC files.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>y</strong><span class="classifier">2d float array</span></dt><dd><p>It is an array of size (K, L). Each column contains the signal at the l-th location.</p>
+</dd>
+<dt><strong>info</strong><span class="classifier">2d array</span></dt><dd><p>An array containing information about sensor location and channels.
+It has L rows, where L is the number of channels.
+Each rows has the following form:</p>
+<blockquote>
+<div><p>pos_x, pos_y, pos_z, cmp, Ts</p>
+</div></blockquote>
+<p>where the first three fields are the position of the sensor in [m].
+cmp is the component code.
+Ts is the sampling time as read from the SAC file.</p>
+</dd>
+<dt><strong>Ts</strong><span class="classifier">float</span></dt><dd><p>Sampling time in [s].</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="synthetic-wavefield-generation">
+<h2><a class="toc-backref" href="#id3">Synthetic wavefield generation</a><a class="headerlink" href="#synthetic-wavefield-generation" title="Permalink to this headline">¶</a></h2>
+<p>These functions are used to generate monochromatic waves. Mostly useful for code testing.</p>
+</div>
+<div class="section" id="estimation-routines">
+<h2><a class="toc-backref" href="#id4">Estimation routines</a><a class="headerlink" href="#estimation-routines" title="Permalink to this headline">¶</a></h2>
+<p>Here is the code used for several estimation tasks.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Code Documentation</a><ul>
+<li><a class="reference internal" href="#reading-of-input-files">Reading of input files</a></li>
+<li><a class="reference internal" href="#synthetic-wavefield-generation">Synthetic wavefield generation</a></li>
+<li><a class="reference internal" href="#estimation-routines">Estimation routines</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="references.html"
+                        title="previous chapter">Scientific publications related to WaveDec</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="references.html" title="Scientific publications related to WaveDec"
+             >previous</a> |</li>
+<li><a href="https://github.com/StefanoMarano">Home</a> &#187; <a href="index.html">WaveDec  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      Last updated on Apr 26, 2020.
+    <br>
+        &copy; Copyright 202, Stefano Maranò.
+<!-- <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png"/></a>-->
+ This documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ?
+"https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost +
+"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4477781-2");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+  </body>
+</html>
