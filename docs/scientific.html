@@ -1,0 +1,649 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Scientist’s Documentation &#8212; WaveDec  documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Frequently asked questions (FAQ)" href="faq.html" />
+    <link rel="prev" title="WaveDec: a tool for wavefield decomposition" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="faq.html" title="Frequently asked questions (FAQ)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="WaveDec: a tool for wavefield decomposition"
+             accesskey="P">previous</a> |</li>
+<li><a href="https://github.com/StefanoMarano">Home</a> &#187; <a href="index.html">WaveDec  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="scientist-s-documentation">
+<h1>Scientist’s Documentation<a class="headerlink" href="#scientist-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p>WavDec is a software for the analysis of seismic surface waves. Love and Rayleigh waves are analyzed using a maximum likelihood approach. The implementation in WaveDec follows an algorithm described in <a class="reference internal" href="references.html#marano-et-al-2012" id="id1"><span>[Maranò_et_al_2012]</span></a>.</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#signal-model" id="id38">Signal model</a></p>
+<ul>
+<li><p><a class="reference internal" href="#love-wave" id="id39">Love wave</a></p></li>
+<li><p><a class="reference internal" href="#rayleigh-wave" id="id40">Rayleigh wave</a></p>
+<ul>
+<li><p><a class="reference internal" href="#rayleigh-wave-with-circular-wavefront" id="id41">Rayleigh wave with circular wavefront</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#relationship-between-classical-h-v-ellipticity-and-ellipticity-angle" id="id42">Relationship Between Classical H/V Ellipticity and Ellipticity Angle</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#overview-of-the-wavedec-method" id="id43">Overview of the WaveDec method</a></p>
+<ul>
+<li><p><a class="reference internal" href="#measurement-model" id="id44">Measurement model</a></p></li>
+<li><p><a class="reference internal" href="#maximum-likelihood-estimation" id="id45">Maximum likelihood estimation</a></p></li>
+<li><p><a class="reference internal" href="#model-selection" id="id46">Model selection</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#example-applications" id="id47">Example applications</a></p>
+<ul>
+<li><p><a class="reference internal" href="#sesame-m2-1" id="id48">SESAME M2.1</a></p>
+<ul>
+<li><p><a class="reference internal" href="#benefit-of-joint-modeling-rayleigh-and-love-waves" id="id49">Benefit of joint modeling Rayleigh and Love waves</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#davos-sdak" id="id50">Davos (SDAK)</a></p></li>
+<li><p><a class="reference internal" href="#zurich-airport-sklw-passive" id="id51">Zurich Airport (SKLW) - Passive</a></p></li>
+<li><p><a class="reference internal" href="#zurich-airport-sklw-active" id="id52">Zurich Airport (SKLW) - Active</a></p></li>
+<li><p><a class="reference internal" href="#baar-sbas" id="id53">Baar (SBAS)</a></p></li>
+<li><p><a class="reference internal" href="#rayleigh-wave-ellipticity-at-different-sites" id="id54">Rayleigh wave ellipticity at different sites</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="signal-model">
+<h2><a class="toc-backref" href="#contents">Signal model</a><a class="headerlink" href="#signal-model" title="Permalink to this headline">¶</a></h2>
+<p>The two major types of seismic surface waves are Love and Rayleigh waves.</p>
+<p>To measure seismic waves, we deploy an array of triaxial seismometers on the surface of the earth. We restrict our interest to small aperture arrays and work with a flat earth model. We use a three-dimensional, right-handed Cartesian coordinate system with the <img class="math" src="_images/math/8d051150f8669295ecdbe92367941012175a824d.png" alt="z"/> axis pointing upward. The azimuth <img class="math" src="_images/math/b6c245d487949782a89cab9ee83504a62fdc2337.png" alt="\psi"/> is measured counter-clockwise from the <img class="math" src="_images/math/888f7c323ac0341871e867220ae2d76467d74d6e.png" alt="x"/> axis. Each sensor measures the ground velocity along the direction of the axes of the coordinate system <img class="math" src="_images/math/888f7c323ac0341871e867220ae2d76467d74d6e.png" alt="x"/>, <img class="math" src="_images/math/1b5e577d6216dca3af7d87aa122a0b9b360d6cb3.png" alt="y"/>, and <img class="math" src="_images/math/8d051150f8669295ecdbe92367941012175a824d.png" alt="z"/>. For the sake of simplicity, we provide wave equations of the displacement field <img class="math" src="_images/math/352f74d71ad9144677bed76f6a9deb39593f2916.png" alt="\mathbf{u}"/>, despite the actual measurement is often the velocity field <img class="math" src="_images/math/067af620d2286044a5698a1e3c2468307b3f10f9.png" alt="\frac{\partial\mathbf{u}}{\partial t}"/>.</p>
+<p>We are interested in the analysis of waves propagating near the surface of the earth and having a direction of propagation lying on the horizontal plane <img class="math" src="_images/math/68a19273f6a404e1f7e2bd4ad67460bbe5777a93.png" alt="z=0"/>. We consider the wavefield to be composed of the superposition of several Rayleigh and Love waves. The wave equations we describe hereafter are valid for <img class="math" src="_images/math/68a19273f6a404e1f7e2bd4ad67460bbe5777a93.png" alt="z=0"/> and for plane wave fronts. The direction of propagation of a wave is given by the wave vector <img class="math" src="_images/math/313560124291bf0f9f70c02f71ad580a770955e1.png" alt="\boldsymbol{\kappa}=\kappa\left(\cos\psi,\sin\psi,0\right)^{T}"/>, whose magnitude <img class="math" src="_images/math/17b08ec794a8682e38d431e353b09277a5b67e3b.png" alt="\kappa=2\pi/\lambda"/> is the wavenumber and <img class="math" src="_images/math/cefc603e5658facb747581f9567192993f21c7ab.png" alt="\lambda"/> is the wavelength. The phase velocity <img class="math" src="_images/math/02d98909b5d6acd6a7ff927d4d42790bdd407d58.png" alt="v"/> at frequency <img class="math" src="_images/math/5b7752c757e0b691a80ab8227eadb8a8389dc58a.png" alt="f"/> if related to the wavenumber as <img class="math" src="_images/math/b4591cc046186e9dabea8fa7c9501795ff20acef.png" alt="v=2\pi f/\kappa"/>.</p>
+<div class="section" id="love-wave">
+<h3><a class="toc-backref" href="#contents">Love wave</a><a class="headerlink" href="#love-wave" title="Permalink to this headline">¶</a></h3>
+<div class="figure align-right" id="id10" style="width: 20%">
+<span id="figlovewave"></span><a class="reference internal image-reference" href="_images/love_wave.png"><img alt="A Love wave" src="_images/love_wave.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 1 </span><span class="caption-text">Graphical representation of the displacement induced by a single Love wave.</span><a class="headerlink" href="#id10" title="Permalink to this image">¶</a></p>
+</div>
+<p>Love waves exhibit a particle motion confined to the horizontal plane. The particle oscillates perpendicular to the direction of propagation. The particle displacement generated by a single Love wave
+at position and time <img class="math" src="_images/math/66bf1672939eda8842de812f81046c98074c2dd4.png" alt="(\mathbf{p},t)"/> is</p>
+<div class="math" id="equation-lovewave">
+<p><span class="eqno">(1)<a class="headerlink" href="#equation-lovewave" title="Permalink to this equation">¶</a></span><img src="_images/math/1345ef4c6a8732bd6472a6e25444c252cbd1aa57.png" alt="\begin{eqnarray*}
+   u_x(\mathbf{p},t) &amp; = &amp; -\alpha \sin \psi \, cos(\omega t - \boldsymbol{\kappa} \cdot \mathbf{p} + \phi) \\
+   u_y(\mathbf{p},t) &amp; = &amp; \alpha \cos \psi \, cos(\omega t - \boldsymbol{\kappa} \cdot \mathbf{p} + \phi) \\
+   u_z(\mathbf{p},t) &amp; = &amp; 0 \,.
+\end{eqnarray*}"/></p>
+</div><p>The displacement induced by a single Love wave is depicted in on the right. The wavevector <img class="math" src="_images/math/3e654f3f6f74fb2ca364be7be015b48b8c80ef21.png" alt="\boldsymbol{\kappa}"/> is shown. The motion of a single test particle is also shown.</p>
+<p>At a given frequency <img class="math" src="_images/math/16cb1e006199f0853a2dc67ea814446a38beb54e.png" alt="\omega"/>, a Love wave is parametrized by the parameter vector <img class="math" src="_images/math/7e617d694727f11acdbb16d6e28aa3eb8e33a0e3.png" alt="\boldsymbol{\theta} = (\alpha,\phi,\kappa,\psi)"/>.</p>
+<p>Rotational motions induced by a Love wave are</p>
+<div class="math" id="equation-lovewaverotational">
+<p><span class="eqno">(2)<a class="headerlink" href="#equation-lovewaverotational" title="Permalink to this equation">¶</a></span><img src="_images/math/f6b72f7be16e8f0da25ac73d14a72711628f04b8.png" alt="\begin{eqnarray*}
+   \omega_x(\mathbf{p},t) &amp; = &amp; 0 \\
+   \omega_y(\mathbf{p},t) &amp; = &amp; 0 \\
+   \omega_z(\mathbf{p},t) &amp; = &amp; \frac{1}{2} \alpha \kappa \sin(\omega t - \boldsymbol{\kappa} \cdot \mathbf{p} + \phi) \,.
+\end{eqnarray*}"/></p>
+</div><p>More details on the analysis of rotational motions are found in <a class="reference internal" href="references.html#marano-et-al-2014" id="id2"><span>[Maranò_et_al_2014]</span></a>.</p>
+</div>
+<div class="section" id="rayleigh-wave">
+<span id="scientificrayleighwave"></span><h3><a class="toc-backref" href="#contents">Rayleigh wave</a><a class="headerlink" href="#rayleigh-wave" title="Permalink to this headline">¶</a></h3>
+<div class="figure align-right" id="id11" style="width: 20%">
+<span id="figrayleighwave"></span><a class="reference internal image-reference" href="_images/rayleigh_wave.png"><img alt="A Rayleigh wave" src="_images/rayleigh_wave.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 2 </span><span class="caption-text">Graphical representation of the displacement induced by a single Rayleigh wave.</span><a class="headerlink" href="#id11" title="Permalink to this image">¶</a></p>
+</div>
+<p>Rayleigh waves exhibit an elliptical particle motion confined to
+the vertical plane perpendicular to the surface of the earth and
+containing the direction of propagation of the wave. The particle
+displacement generated by a single Rayleigh wave is</p>
+<div class="math" id="equation-rayleighwave">
+<p><span class="eqno">(3)<a class="headerlink" href="#equation-rayleighwave" title="Permalink to this equation">¶</a></span><img src="_images/math/21e8baf66796de8f59628c6e570a91299a6d5528.png" alt="\begin{eqnarray*}
+   u_x(\mathbf{p},t) &amp; = &amp; \alpha \sin \xi \, \cos \psi \, \cos(\omega t - \boldsymbol{\kappa} \cdot \mathbf{p} + \phi) \\
+   u_y(\mathbf{p},t) &amp; = &amp; \alpha \sin \xi \, \sin \psi \, \cos(\omega t - \boldsymbol{\kappa} \cdot \mathbf{p} + \phi) \\
+   u_z(\mathbf{p},t) &amp; = &amp; \alpha \cos \xi \, \cos(\omega t - \boldsymbol{\kappa} \cdot \mathbf{p} +\pi/2 + \phi) \,.
+\end{eqnarray*}"/></p>
+</div><p>The displacement induced by a single Rayleigh wave is depicted in on the right. The wavevector <img class="math" src="_images/math/3e654f3f6f74fb2ca364be7be015b48b8c80ef21.png" alt="\boldsymbol{\kappa}"/> is shown. The elliptical and retrograde motion of a single test particle is also shown.</p>
+<p>At a given frequency <img class="math" src="_images/math/16cb1e006199f0853a2dc67ea814446a38beb54e.png" alt="\omega"/>, a Rayleigh wave is parametrized by the parameter vector <img class="math" src="_images/math/1c7bd5ff1a2fb4de2f56ba0568ad49047bbf6488.png" alt="\boldsymbol{\theta} = (\alpha,\phi,\kappa,\psi,\xi)"/>.</p>
+<p>The angle <img class="math" src="_images/math/f6a25608c47f410bb981d96283e31211262624d3.png" alt="\xi\in[-\pi/2;+\pi/2]"/> is called ellipticity angle of the Rayleigh wave and determines the eccentricity and the sense of rotation of the particle motion. The figure below (a) depicts the particle motion of a Rayleigh wave and how the ellipticity angle is defined. Rayleigh wave particle motion is depicted with a black ellipse and the sense of rotation with the black arrows on the ellipse. The <img class="math" src="_images/math/8d051150f8669295ecdbe92367941012175a824d.png" alt="z"/> axis is vertical to the surface. The <img class="math" src="_images/math/888f7c323ac0341871e867220ae2d76467d74d6e.png" alt="x"/> axis lies on the surface and is parallel to the wavevector <img class="math" src="_images/math/b60f03c1f8ea38511a8a95a22a2c6b4d44f12dd0.png" alt="\bm{\kappa}"/>. The ellipticity angle <img class="math" src="_images/math/4b0fcdf5bbee5b94367e76452870b31d7c74f348.png" alt="\xi"/> has the vertex at the topmost intersection between the <img class="math" src="_images/math/8d051150f8669295ecdbe92367941012175a824d.png" alt="z"/> axis and the particle motion ellipse. The first side of the ellipticity angle is the <img class="math" src="_images/math/8d051150f8669295ecdbe92367941012175a824d.png" alt="z"/> axis. The second side is the line connecting the vertex with the intersection of the <img class="math" src="_images/math/888f7c323ac0341871e867220ae2d76467d74d6e.png" alt="x"/> axes and the particle motion ellipse (the intersection is chosen such that the particle motion at the intersection has a <img class="math" src="_images/math/d14c1b944b6396f59dbe205f75ffff977af007cb.png" alt="+\pi/2"/> radians shift with respect to the vertex).</p>
+<p>When <img class="math" src="_images/math/59407b53b3f29c550c8a99814119da235779eec1.png" alt="\xi\in\left(-\pi/2,0\right)"/>, the Rayleigh wave particle motion is said to be retrograde (i.e., the oscillation on the vertical component <img class="math" src="_images/math/8384eda3982ce9a1576dcfaac12fbadb866e61b8.png" alt="(u_{z})"/> is shifted by <img class="math" src="_images/math/d14c1b944b6396f59dbe205f75ffff977af007cb.png" alt="+\pi/2"/> radians with respect to the oscillation on the direction of propagation). Two possible retrograde particle motions and corresponding ellipticity angles are shown in (c) and (d). When <img class="math" src="_images/math/5d96f2427aa69f13deafdc11a2f3899b95da4841.png" alt="\xi\in\left(0,\pi/2\right)"/> the particle motion is said to be prograde, cf. (f) and (g). For <img class="math" src="_images/math/15cb18ef48f7bf1c282fbff7c3f65eff08ae55e3.png" alt="\xi=\pm\pi/2"/> cf. (b) and <img class="math" src="_images/math/a9762b9c2cb0a2d0468b18b41453b468863cce5a.png" alt="\xi=0"/> (e) the particle motion polarization is horizontal and vertical, respectively.</p>
+<div class="align-center figure" id="id12" style="width: 80%">
+<span id="figellipticityrepresentation"></span><a class="reference internal image-reference" href="_images/EllipticityRepresentation.png"><img alt="Rayleigh wave Ellipticity angle" src="_images/EllipticityRepresentation.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 3 </span><span class="caption-text">Depiction of the Rayleigh wave particle motion for several values of the ellipticity angle <img class="math" src="_images/math/f6a25608c47f410bb981d96283e31211262624d3.png" alt="\xi\in[-\pi/2;+\pi/2]"/>.
+Rayleigh wave particle motion is depicted with a black solid line and the sense of rotation with the black arrows.
+The <img class="math" src="_images/math/8d051150f8669295ecdbe92367941012175a824d.png" alt="z"/> axes denotes the surface vertical. The <img class="math" src="_images/math/888f7c323ac0341871e867220ae2d76467d74d6e.png" alt="x"/> axis lies on the surface and is parallel to the wavevector <img class="math" src="_images/math/b60f03c1f8ea38511a8a95a22a2c6b4d44f12dd0.png" alt="\bm{\kappa}"/>.
+(a) The elliptical particle motion for a retrograde Rayleigh wave. The quantities <img class="math" src="_images/math/2f5aa019312e1bbc969deab8dca8b00f76025404.png" alt="\alpha"/>, H, and V are also shown.
+(b) The Rayleigh wave is horizontally polarized for <img class="math" src="_images/math/15cb18ef48f7bf1c282fbff7c3f65eff08ae55e3.png" alt="\xi=\pm\pi/2"/>. (c) Retrograde particle motion for <img class="math" src="_images/math/2e5b81e94d0188b43f05488eb3cc1a16217c6b94.png" alt="\xi=-\pi/6"/>. (d) Retrograde particle motion for <img class="math" src="_images/math/5e87a937bfca6606245f37ac76acb409780dd7d4.png" alt="\xi=-\pi/3"/>. (e) The Rayleigh wave is vertically polarized for <img class="math" src="_images/math/a9762b9c2cb0a2d0468b18b41453b468863cce5a.png" alt="\xi=0"/>. (f) Prograde particle motion for <img class="math" src="_images/math/2a20794daeb5df7403de7b62791b517bb6d74abd.png" alt="\xi=\pi/6"/>. (g) Prograde particle motion for <img class="math" src="_images/math/78efb685559b366eb78d0ec7dc9a4f99ac317e00.png" alt="\xi=\pi/3"/>. <a class="reference download internal" download="" href="_downloads/33624cdd8a4fe099830afc494a49f09b/EllipticityRepresentation.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">image</span> <span class="pre">(PDF).</span></code></a></span><a class="headerlink" href="#id12" title="Permalink to this image">¶</a></p>
+</div>
+<p>Rotational motions induced by a Rayleigh wave are</p>
+<div class="math" id="equation-rayleighwaverotational">
+<p><span class="eqno">(4)<a class="headerlink" href="#equation-rayleighwaverotational" title="Permalink to this equation">¶</a></span><img src="_images/math/52193c751e728fad94401216e2512033adc7aac5.png" alt="\begin{eqnarray*}
+   \omega_x(\mathbf{p},t) &amp; = &amp; \alpha \kappa \sin\psi \cos\xi \cos(\omega t - \boldsymbol{\kappa} \cdot \mathbf{p} + \phi) \\
+   \omega_y(\mathbf{p},t) &amp; = &amp; -\alpha \kappa \cos\psi \cos\xi \cos(\omega t - \boldsymbol{\kappa} \cdot \mathbf{p} + \phi) \\
+   \omega_z(\mathbf{p},t) &amp; = &amp; 0 \,.
+\end{eqnarray*}"/></p>
+</div><p>More details on the analysis of rotational motions are found in <a class="reference internal" href="references.html#marano-et-al-2014" id="id3"><span>[Maranò_et_al_2014]</span></a>.</p>
+<div class="section" id="rayleigh-wave-with-circular-wavefront">
+<h4><a class="toc-backref" href="#contents">Rayleigh wave with circular wavefront</a><a class="headerlink" href="#rayleigh-wave-with-circular-wavefront" title="Permalink to this headline">¶</a></h4>
+<p>The model described in <a class="reference internal" href="#equation-rayleighwave">(3)</a> assumes planar wavefront. This assumption is suitable when the source is located far from the array of sensors. Whenever the source is close or even within the array the curvature of the wavefront need to be taken into account. In applications, this is necessary in active seismic surveying.</p>
+<p>The following describe a Rayleigh wave accounting for the curved wavefront and for the amplitude decay due to geometrical spreading. The quantity <img class="math" src="_images/math/79a3d439d28652c547386f39b555d90d3aaf102d.png" alt="r"/> denotes the distance of the generic position <img class="math" src="_images/math/c11f55e4a25377e79397d43a2cb7ec0365799d59.png" alt="\mathbf{p}"/> from the source <img class="math" src="_images/math/095cd9e8b674500b58aa9ea4c7052d88e1011fa3.png" alt="\mathbf{p}_{s}"/></p>
+<div class="math" id="equation-rayleighwavecircular">
+<p><span class="eqno">(5)<a class="headerlink" href="#equation-rayleighwavecircular" title="Permalink to this equation">¶</a></span><img src="_images/math/9b74ce548943e748c16b123b4ba28d3d42993e64.png" alt="\begin{eqnarray*}
+   u_x(\mathbf{p},\omega) &amp; = &amp; -\sin \xi \, \cos \psi \, H_{1}^{(2)}(\boldsymbol{\kappa} r) \, s(\omega) \\
+   u_y(\mathbf{p},\omega) &amp; = &amp; -\sin \xi \, \sin \psi \, H_{1}^{(2)}(\boldsymbol{\kappa} r) \, s(\omega) \\
+   u_z(\mathbf{p},\omega) &amp; = &amp; \cos \xi \, H_{0}^{(2)}(\boldsymbol{\kappa} r) \, s(\omega) \,,
+\end{eqnarray*}"/></p>
+</div><p>where <img class="math" src="_images/math/4b0fcdf5bbee5b94367e76452870b31d7c74f348.png" alt="\xi"/> is the ellipticity angle of the Rayleigh wave, <img class="math" src="_images/math/b6c245d487949782a89cab9ee83504a62fdc2337.png" alt="\psi"/> is the azimuth angle formed by the vector <img class="math" src="_images/math/23c2f465a21d886909dbe7e4837d6424d96aea88.png" alt="\mathbf{p}-\mathbf{p}_{s}"/> and measured counter-clockwise from the <img class="math" src="_images/math/888f7c323ac0341871e867220ae2d76467d74d6e.png" alt="x"/>-axis, <img class="math" src="_images/math/0ca8b22468f87b37f40a8485e49502b1ca67bb71.png" alt="\boldsymbol{\kappa}=2\pi/\lambda"/> is the wavenumber, and <img class="math" src="_images/math/cefc603e5658facb747581f9567192993f21c7ab.png" alt="\lambda"/> is the wavelength. With <img class="math" src="_images/math/ede7b59262fa192bf886da4005e6842f258df8e9.png" alt="H_{\nu}^{(2)}"/> we denote Hankel functions of the second kind of order <img class="math" src="_images/math/14eb89266154200b9c81dcfc3bd058638fa221bf.png" alt="\nu"/>. The quantity <img class="math" src="_images/math/b891663b80073c62e49176d1c33bad41999adaa3.png" alt="s(\omega)"/> is the spectrum of the source function.</p>
+<p>More details on the joint analysis of active and passive surveys are found in <a class="reference internal" href="references.html#marano-et-al-2017b" id="id4"><span>[Maranò_et_al_2017b]</span></a>.</p>
+</div>
+</div>
+<div class="section" id="relationship-between-classical-h-v-ellipticity-and-ellipticity-angle">
+<span id="secrelationship"></span><h3><a class="toc-backref" href="#contents">Relationship Between Classical H/V Ellipticity and Ellipticity Angle</a><a class="headerlink" href="#relationship-between-classical-h-v-ellipticity-and-ellipticity-angle" title="Permalink to this headline">¶</a></h3>
+<p>We now explain the relationship between two representations of Rayleigh wave ellipticity: the classical H/V ellipticity and the ellipticity angle. We clarify how they can be fairly compared and outline the advantages of the latter representation. In practical terms, one can think of classical ellipticity as a quantity closely related to the empirical H/V ratio and the ellipticity angle as the parameter <img class="math" src="_images/math/4b0fcdf5bbee5b94367e76452870b31d7c74f348.png" alt="\xi"/> estimated by WaveDec.</p>
+<p>In literature, Rayleigh wave ellipticity is referred to as the ratio of the amplitude on the radial component and on the vertical component, i.e., the <img class="math" src="_images/math/8884210b472684a1259aad3d711527d78d78a0e7.png" alt="\textrm{H}/\textrm{V}"/> ellipticity. Considering equation Eq. <a class="reference internal" href="#equation-rayleighwave">(3)</a> and defining <img class="math" src="_images/math/f01d4f970c1b280f3be0acd48d6c12259a56dd19.png" alt="\textrm{H}=\left|\alpha\sin\xi\right|"/> and <img class="math" src="_images/math/326800bdb0a1cb735d2ca16ad09e0ca4f61c27de.png" alt="\textrm{V}=\left|\alpha\cos\xi\right|"/>, it follows that</p>
+<div class="math">
+<p><img src="_images/math/40b92c41ee56057e59e205be8c7c5279eaa5c5ce.png" alt="\begin{eqnarray*}
+  \frac{\textrm{H}}{\textrm{V}}=\frac{\left|\alpha\sin\xi\right|}{\left|\alpha\cos\xi\right|}=\left|\tan\xi\right|\,.
+\end{eqnarray*}"/></p>
+</div><p>Note that there is no information about the sense of rotation of the particle in the <img class="math" src="_images/math/8884210b472684a1259aad3d711527d78d78a0e7.png" alt="\textrm{H}/\textrm{V}"/> ratio as the sign of <img class="math" src="_images/math/68503e7be3b3bb8a74dcdb2e3de3597956be3178.png" alt="\tan\xi"/> is lost. By considering directly the ellipticity angle <img class="math" src="_images/math/4b0fcdf5bbee5b94367e76452870b31d7c74f348.png" alt="\xi"/> it is possible to preserve this information and infer the sense of particle rotation.</p>
+<p>The figure below depicts the two different representations for Rayleigh wave ellipticity in the case of a layer over half space and clarifies this idea. Namely, the <a class="reference external" href="http://sesame.geopsy.org/">SESAME</a> structural model M2.1 is used.  It is known from literature that in such a model the motion of the fundamental mode is retrograde at low frequencies. At each singularity (i.e., either <img class="math" src="_images/math/e9bf04224831c87cb0c6df4e7adfd8bfd5f77d8f.png" alt="\textrm{H}=0"/> or <img class="math" src="_images/math/05464ab59c9a3d0488ca831b2c30a35f11157618.png" alt="\textrm{V}=0"/>) the sense of rotation changes from retrograde to prograde or vice versa.</p>
+<div class="align-center figure" id="id13" style="width: 80%">
+<span id="figellipticityrepresentationm21"></span><a class="reference internal image-reference" href="_images/M2.1_RayleighEllipticityRepresentation.png"><img alt="Rayleigh wave Ellipticity for the SESAME M2.1 model" src="_images/M2.1_RayleighEllipticityRepresentation.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 4 </span><span class="caption-text">(a) Classical H/V ellipticity and (b) ellipticity angle representation of Rayleigh wave ellipticity for the SESAME M2.1 model.
+On the right of (b), the particle motion is sketched for different values of the ellipticity angle and for a wave propagating from left to right. <a class="reference download internal" download="" href="_downloads/a39deecc6ffaca8e60fc0b6d76c1ec3f/M2.1_RayleighEllipticityRepresentation.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">image</span> <span class="pre">(PDF).</span></code></a></span><a class="headerlink" href="#id13" title="Permalink to this image">¶</a></p>
+</div>
+<p>Firstly, we look at the fundamental mode (solid red line) in the <img class="math" src="_images/math/8884210b472684a1259aad3d711527d78d78a0e7.png" alt="\textrm{H}/\textrm{V}"/> representation of (a). The particle motion is retrograde up to 2vHz, where the first singularity occurs and the particle motion is horizontally polarized. Between 2 Hz and 3.8 Hz the particle motion is prograde, at 3.8 Hz the wave is vertically polarized. Above 3.8 Hz the motion is again retrograde. We stress that from this picture it is not possible to get any information about the sense of rotation of the particle and we are allowed to draw the previous considerations only because of the prior knowledge about the model.</p>
+<p>Secondly, in (b) the ellipticity is represented by means of the ellipticity angle <img class="math" src="_images/math/4b0fcdf5bbee5b94367e76452870b31d7c74f348.png" alt="\xi"/>. As explained earlier in this section, the particle motion is retrograde when <img class="math" src="_images/math/59407b53b3f29c550c8a99814119da235779eec1.png" alt="\xi\in\left(-\pi/2,0\right)"/> and it is prograde when <img class="math" src="_images/math/5d96f2427aa69f13deafdc11a2f3899b95da4841.png" alt="\xi\in\left(0,\pi/2\right)"/>. The polarization is vertical for <img class="math" src="_images/math/a9762b9c2cb0a2d0468b18b41453b468863cce5a.png" alt="\xi=0"/> and horizontal for <img class="math" src="_images/math/15cb18ef48f7bf1c282fbff7c3f65eff08ae55e3.png" alt="\xi=\pm\pi/2"/>. Similar considerations can be made for the higher modes, which are not depicted here.</p>
+</div>
+</div>
+<div class="section" id="overview-of-the-wavedec-method">
+<h2><a class="toc-backref" href="#contents">Overview of the WaveDec method</a><a class="headerlink" href="#overview-of-the-wavedec-method" title="Permalink to this headline">¶</a></h2>
+<p>We analyse array recordings of ambient vibrations using the WaveDec software, which implements the algorithm presented in <a class="reference internal" href="references.html#marano-et-al-2012" id="id5"><span>[Maranò_et_al_2012]</span></a>. Wavefield parameters <img class="math" src="_images/math/4000cacb39c16e78bcc5eb01e849b84be840bd11.png" alt="\boldsymbol{\theta}"/> are estimated following the Maximum Likelihood (ML) criterion. For Love and Rayleigh waves estimated parameters include wavenumber and direction of arrival. For Rayleigh waves, the ellipticity angle is also estimated. The algorithm jointly processes the three sensors components and provides an estimate of Rayleigh wave ellipticity together with the sense of rotation (i.e., prograde vs. retrograde particle motion). The simultaneous presence of multiple Love and Rayleigh waves is accounted for. The number of waves modelled is gradually increased by the algorithm and wave parameters are iteratively re-estimated. The type and the number of waves modelled are chosen adaptively from the algorithm following a statistical criterion. As it will be clear from our results, there is a significant improvement when considering jointly multiple waves of multiple types.</p>
+<div class="section" id="measurement-model">
+<h3><a class="toc-backref" href="#contents">Measurement model</a><a class="headerlink" href="#measurement-model" title="Permalink to this headline">¶</a></h3>
+<p>We rely on noisy measurements from <img class="math" src="_images/math/19eef1966f7c545af3ac8c0fa486974d873e3c65.png" alt="L"/>  channels. In the case of <img class="math" src="_images/math/3bfb3a64189a14b2704f4610827762d5e3145114.png" alt="N"/> three-component sensors, we have <img class="math" src="_images/math/1a5b9c44bae25c41d7bbd42c5a2a1d12f6a3d289.png" alt="L=3N"/>. In particular, on the <img class="math" src="_images/math/bfd74f09749ef7fb6d498c407ff2c57d9523e958.png" alt="\ell"/>-th channel the measurements <img class="math" src="_images/math/e5f5f4205eb2369ab46ef4a6ab229efe8c909c2e.png" alt="Y_{k}^{(\ell)}"/> at discrete instants <img class="math" src="_images/math/3ca18d6c3ecdc0bdd2ab5c81dccd3d4595ff5aaf.png" alt="t_{k}"/> are</p>
+<div class="math">
+<p><img src="_images/math/d9ca808923d48d69e167d2ef3b5f467ac2209fb6.png" alt="\begin{eqnarray*}
+  Y_{k}^{(\ell)}=u(\mathbf{p}_{\ell},t_{k})+Z_{k}^{(\ell)}\,\textrm{for}\, k=1,\ldots,K\,,
+\end{eqnarray*}"/></p>
+</div><p>where <img class="math" src="_images/math/31a54905080973e234478fa7586eec1f8e3fd380.png" alt="u(\mathbf{p}_{\ell},t_{k})"/> is a deterministic function with unknown wavefield parameters and <img class="math" src="_images/math/cc71cec11a492a4cd9caa7966c95e60266ca4cd3.png" alt="Z_{k}^{(\ell)}"/> is zero-mean additive white Gaussian noise with variance <img class="math" src="_images/math/bf622c13a8164638879df0c15aabb44a26d6f20b.png" alt="\sigma_{\ell}^{2}"/>.</p>
+<p>With this signal model, the probability density function (PDF) of the observations <img class="math" src="_images/math/b04f62e21c4cd0ae0183708ab43bd04d6a0579f7.png" alt="\mathbf{y}"/> of <img class="math" src="_images/math/389a71e930a3b48fcee384331d034ce624efc424.png" alt="\mathbf{Y}"/> is</p>
+<div class="math" id="equation-pdfiid">
+<p><span class="eqno">(6)<a class="headerlink" href="#equation-pdfiid" title="Permalink to this equation">¶</a></span><img src="_images/math/49f5ec4f3b17d42e7b5a91942d562e0cd3ea3716.png" alt="\begin{eqnarray*}
+  p(y|\boldsymbol{\theta})   =\prod_{\ell=1}^{L}\prod_{k=1}^{K}\frac{1}{\sqrt{2\pi\sigma_{\ell}^{2}}}\textrm{e}^{-\left(y_{k}^{(\ell)}-u_{k}^{(\ell)}\right)^{2}/2\sigma_{\ell}^{2}}\,,
+\end{eqnarray*}"/></p>
+</div><p>where we grouped all the measurement as <img class="math" src="_images/math/3b79bc8ef28238d3cffef5ac5bbf265c3bedc2e6.png" alt="y = \{y_{k}^{(\ell)}\}"/> and defined <img class="math" src="_images/math/2d9276f686b41c2f6f5d2c15b289ffc27f4464a3.png" alt="u_{k}^{(\ell)} = u(\mathbf{p}_{\ell},t_{k})"/>.</p>
+<p>In the proposed technique, instead of computing the likelihood of the observation directly from <a class="reference internal" href="#equation-pdfiid">(6)</a>, we model it by means of a <a class="reference external" href="https://en.wikipedia.org/wiki/Factor_graph">factor graph</a>. This enables the algorithm a more efficient computation of the likelihood.</p>
+</div>
+<div class="section" id="maximum-likelihood-estimation">
+<h3><a class="toc-backref" href="#contents">Maximum likelihood estimation</a><a class="headerlink" href="#maximum-likelihood-estimation" title="Permalink to this headline">¶</a></h3>
+<p>An ML estimate <img class="math" src="_images/math/da74b2e8f91b0fbb3e035980c571ebcdcc7c8cd1.png" alt="\boldsymbol{\hat{\theta}}"/> is found maximizing the likelihood function</p>
+<div class="math">
+<p><img src="_images/math/403f0307234c48ce11d5013d0a7b210639b1a23f.png" alt="\begin{eqnarray*}
+  \boldsymbol{\hat{\theta}} = \textrm{argmax}_{\boldsymbol{\theta}}p(y|\boldsymbol{\theta})\,.
+\end{eqnarray*}"/></p>
+</div><p>This maximization is performed analytically for the parameters <img class="math" src="_images/math/2f5aa019312e1bbc969deab8dca8b00f76025404.png" alt="\alpha"/> and <img class="math" src="_images/math/fffd2357ee88a9c50ba9e831ed64c39c73d54a07.png" alt="\phi"/>. It is performed numerically for the remaining parameters using a grid search first and then a numerical optimization routine.</p>
+</div>
+<div class="section" id="model-selection">
+<h3><a class="toc-backref" href="#contents">Model selection</a><a class="headerlink" href="#model-selection" title="Permalink to this headline">¶</a></h3>
+<p>In the seismic wavefield several waves of different functional forms are present simultaneously. This interference can severely downgrade the quality of the analysis. WaveDec follows an approach, called wavefield decomposition, enabling us to separate the contribution of different waves and improving the accuracy of the parameter estimation. In the proposed technique the composition of the wavefield can vary in time. The number of waves modelled by the algorithm is increased gradually. Each estimated parameter vector benefits from the estimation of the other waves as the parameter estimation of each wave is repeated iteratively.</p>
+<p>We use a penalized version of Bayesian information criterion (BIC) where a scalar <img class="math" src="_images/math/34d137cf01c787ecda732761c3f95b0f65a6c3e9.png" alt="\gamma"/> allows to control the complexity of the model. The penalized BIC is defined as</p>
+<div class="math">
+<p><img src="_images/math/229c22a321dda7521ae023ed4ac354cf0249a669.png" alt="\begin{eqnarray*}
+  \textrm{BIC}_{\gamma}=-2p(y|\boldsymbol{\theta})+\gamma N_{p}\ln(LK)\,,
+\end{eqnarray*}"/></p>
+</div><p>where <img class="math" src="_images/math/f7258d5ef52d9bf1ea0d50f8bcbb3ab8f8031374.png" alt="N_{p}"/> denotes the number of parameters of the statistical model and <img class="math" src="_images/math/6d0677e080545c932363d1cf04907ef3ef574f6c.png" alt="LK"/> is the number of measurements. The parameter <img class="math" src="_images/math/bd829418178a0ccadbddce9a78f0a281a0f1ae31.png" alt="\gamma\geq0"/> enables us to follow a pure BIC model selection strategy for <img class="math" src="_images/math/c126e7e8441738adb6ebda0524e46d35f28bf14c.png" alt="\gamma=1"/>, an ML approach (which will result in overfitting) for <img class="math" src="_images/math/162be2d4105af80c2db72613cecdbfdd9a0bb968.png" alt="\gamma=0"/>, or any intermediate strategy for different values <img class="math" src="_images/math/7981c8c30cbadc08c9422b2d1087431e38c425d2.png" alt="\gamma\in\left(0,1\right)"/>.</p>
+</div>
+</div>
+<div class="section" id="example-applications">
+<h2><a class="toc-backref" href="#contents">Example applications</a><a class="headerlink" href="#example-applications" title="Permalink to this headline">¶</a></h2>
+<p>In this section, we present some results obtained with WaveDec and WaveDecActive. For more details see <a class="reference internal" href="references.html#marano-et-al-2017a" id="id6"><span>[Maranò_et_al_2017a]</span></a>.</p>
+<div class="section" id="sesame-m2-1">
+<h3><a class="toc-backref" href="#contents">SESAME M2.1</a><a class="headerlink" href="#sesame-m2-1" title="Permalink to this headline">¶</a></h3>
+<p>We first consider ambient vibrations from a high-fidelity synthetic wavefield. The dataset was created
+within the <a class="reference external" href="http://sesame.geopsy.org/">SESAME project</a>. We consider a model of a layer of softer sediments
+over an half-space with higher velocity.</p>
+<div class="align-center figure" id="id14" style="width: 40%">
+<a class="reference internal image-reference" href="_images/LoveWaves_L0_Wavenumber.png"><img alt="Wavenumber L0" src="_images/LoveWaves_L0_Wavenumber.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 5 </span><span class="caption-text">Estimated Love wave wavenumber, fundamental mode.</span><a class="headerlink" href="#id14" title="Permalink to this image">¶</a></p>
+</div>
+<p>The picture above show the estimated Love wave dispersion curve for the fundamental mode.
+Estimated values and their uncertainty is shown with a blue solid line. Theoretical values are shown with the green solid line.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 47%" />
+<col style="width: 53%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><div class="align-center figure align-default" id="id15" style="width: 90%">
+<a class="reference internal image-reference" href="_images/RayleighWaves_R0_Wavenumber_B.png"><img alt="Wavenumber R0" src="_images/RayleighWaves_R0_Wavenumber_B.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 6 </span><span class="caption-text">Estimated Rayleigh wave wavenumber, fundamental mode.</span><a class="headerlink" href="#id15" title="Permalink to this image">¶</a></p>
+</div>
+</td>
+<td><div class="align-center figure align-default" id="id16" style="width: 85%">
+<a class="reference internal image-reference" href="_images/RayleighWaves_R0_EllipticityAngle.png"><img alt="Ellipticty angle R0" src="_images/RayleighWaves_R0_EllipticityAngle.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 7 </span><span class="caption-text">Estimated Rayleigh wave ellipticty angle, fundamental mode.</span><a class="headerlink" href="#id16" title="Permalink to this image">¶</a></p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The pictures above show the estimated Rayleigh wave dispersion curve (left) and the Rayleigh wave ellipticity angle (right) for the fundamental mode.
+From the left picture we infer that the particle motion of the Rayleigh wave fundamental mode is prograde
+above 2 Hz until 3.8 Hz, i.e. <img class="math" src="_images/math/6ae403e203fe4af1ba9de88069a42d7cc9389c2b.png" alt="\xi &gt; 0"/>. At 3.8 Hz the particle is vertically polarized. Above this frequency
+the wave has a retrograde particle motion, i.e. <img class="math" src="_images/math/1830d8b09e38b18b4a6d05dfd152869582812323.png" alt="\xi &lt; 0"/>. This is a standard behaviour of the ellipticity
+angle curve in presence of a single interface with a strong velocity contrast.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 47%" />
+<col style="width: 53%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><div class="align-center figure align-default" id="id17" style="width: 90%">
+<a class="reference internal image-reference" href="_images/RayleighWaves_R1_Wavenumber_B.png"><img alt="Wavenumber R1" src="_images/RayleighWaves_R1_Wavenumber_B.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 8 </span><span class="caption-text">Estimated Rayleigh wave wavenumber, first higher mode.</span><a class="headerlink" href="#id17" title="Permalink to this image">¶</a></p>
+</div>
+</td>
+<td><div class="align-center figure align-default" id="id18" style="width: 85%">
+<a class="reference internal image-reference" href="_images/RayleighWaves_R1_EllipticityAngle.png"><img alt="Ellipticty angle R1" src="_images/RayleighWaves_R1_EllipticityAngle.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 9 </span><span class="caption-text">Estimated Rayleigh wave ellipticty angle, first higher mode.</span><a class="headerlink" href="#id18" title="Permalink to this image">¶</a></p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The pictures above show the estimated Rayleigh wave dispersion curve (left) and the Rayleigh wave ellipticity angle (right) for the first higher mode.</p>
+<div class="align-center figure" id="id19" style="width: 40%">
+<a class="reference internal image-reference" href="_images/HV.png"><img alt="Rayleigh wave Ellipticity and H/V ratio" src="_images/HV.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 10 </span><span class="caption-text">Comparison of H/V ratios (red lines) and ellipticity angle (blue lines, two modes), and theoretical values (green).</span><a class="headerlink" href="#id19" title="Permalink to this image">¶</a></p>
+</div>
+<p>In the figure above, the H/V ratios of each sensor are compared with the ellipticity curves from array processing.
+The result of each sensor is depicted with a light red line while the average H/V of all stations
+is solid red. The ellipticity curve for the fundamental mode is depicted with a solid blue line and the
+curve for the first higher mode with a dashed blue line. The ellipticity of both the fundamental mode
+and the first higher mode are in good agreement with the theoretical values (depicted in green). The
+only slight deviation from the theoretical values is observed below 3 Hz. We observe that this frequency
+corresponds to the frequency where the dispersion curve intersects the lower array resolution
+limit and can thus be explained with a loss of resolution of the array. Above 3 Hz, the right
+flank of the H/V peak agrees well with the ellipticity curve of the fundamental mode. The location of
+the trough at just below 4 Hz can be understood rather clearly both from the H/V ratios and from the
+ellipticity curve. A singularity at 5 Hz is only seen as a sharp peak from the ellipticity curve of the first
+higher mode while is not seen in the H/V ratios.</p>
+<div class="section" id="benefit-of-joint-modeling-rayleigh-and-love-waves">
+<span id="secjointmodeling"></span><h4><a class="toc-backref" href="#contents">Benefit of joint modeling Rayleigh and Love waves</a><a class="headerlink" href="#benefit-of-joint-modeling-rayleigh-and-love-waves" title="Permalink to this headline">¶</a></h4>
+<p>By modeling jointly both Rayleigh and Love waves, the accuracy of the estimated parameters is improved. We consider the
+retrieval of Rayleigh wave ellipticty when modeling i) both Rayleigh and Love waves and ii) modeling only Rayleigh waves and ignoring
+Love waves. The SESAME M2.1 model is used. This example is presented in <a class="reference internal" href="references.html#marano-et-al-2017a" id="id7"><span>[Maranò_et_al_2017a]</span></a>.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 47%" />
+<col style="width: 53%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><div class="align-center figure align-default" id="id20" style="width: 90%">
+<a class="reference internal image-reference" href="_images/RayleighWaves_R0_EllipticityAngle.png"><img alt="Ellipticty angle R0" src="_images/RayleighWaves_R0_EllipticityAngle.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 11 </span><span class="caption-text">Rayleigh wave ellipticty angle, fundamental mode.
+Both Rayleigh and Love waves are modeled by WaveDec.</span><a class="headerlink" href="#id20" title="Permalink to this image">¶</a></p>
+</div>
+</td>
+<td><div class="align-center figure align-default" id="id21" style="width: 85%">
+<a class="reference internal image-reference" href="_images/woLove_RayleighWaves_R0_EllipticityAngle.png"><img alt="Ellipticty angle R0" src="_images/woLove_RayleighWaves_R0_EllipticityAngle.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 12 </span><span class="caption-text">Rayleigh wave ellipticty angle, fundamental mode.
+Only Rayleigh waves are modeled my WaveDec.</span><a class="headerlink" href="#id21" title="Permalink to this image">¶</a></p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Figures above show the ellipticity angle of the fundamental mode when modelling both Love and Rayleigh waves (left) and when
+modelling only Rayleigh waves and ignoring Love waves (right). The deviation of the picked ellipticity
+angle curve with respect to the theoretical values around 3 Hz is immediately evident on the right-hand picture. In particular,
+there is a systematic shift of the curve towards higher values of the ellipticity angle, corresponding to a more horizontally polarized particle motion.
+In other words, by not modeling Love waves, there is more energy unexplained by the algorithm on the horizontal components and this lead to a wrong estimate of the
+Rayleigh wave ellipticty angle.</p>
+<div class="align-center figure" id="id22" style="width: 70%">
+<span id="figelliptictydifference"></span><a class="reference internal image-reference" href="_images/R0_LoveEffect.png"><img alt="Rayleigh wave Ellipticity angle" src="_images/R0_LoveEffect.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 13 </span><span class="caption-text">Difference between estimated and theoretical ellipticity angle.</span><a class="headerlink" href="#id22" title="Permalink to this image">¶</a></p>
+</div>
+<p>Fig. <a class="reference internal" href="#figelliptictydifference"><span class="std std-ref">Difference between estimated and theoretical ellipticity angle.</span></a> depicts the differences between the estimated and the true ellipticity angle for the fundamental mode. The red line depicts the difference obtained
+when WaveDec is modelling jointly Rayleigh and Love waves. The blue line depicts the difference
+obtained when only Rayleigh waves are modelled and Love waves ignored. It is immediately possible to observe that without
+modelling Love waves there is a large deviation in the estimated Rayleigh ellipticity angle between
+2.5 and 3.8 Hz. When the Love waves are also modelled, the bias is smaller and only present below
+3 Hz. We note that the lower resolution limit of the array is at 3 Hz, so the deviation from the true
+curve may also be related to this fact.</p>
+<p>We conclude that ignoring the presence of Love waves can result in a bias in the recovered
+Rayleigh wave ellipticity. In fact the ellipticity angle is larger, suggesting a more horizontally polarized
+Rayleigh wave than in reality. This is reasonable since the energy of Love waves is limited to
+the horizontal components. By jointly modelling both Love and Rayleigh waves using WaveDec it is
+possible to mitigate such a bias.</p>
+</div>
+</div>
+<div class="section" id="davos-sdak">
+<h3><a class="toc-backref" href="#contents">Davos (SDAK)</a><a class="headerlink" href="#davos-sdak" title="Permalink to this headline">¶</a></h3>
+<p>The site <a class="reference external" href="http://stations.seismo.ethz.ch/opencms8/opencms/seddb/station_information_public/station_given_networkcode_and_stationcode.html?networkcode=CH&amp;stationcode=SDAK">SDAK</a> in Davos, Canton of Grisons is located in the centre of a narrow sedimentary basin
+of around 500 m width in the Swiss Alps. The underground is composed of alluvial deposits of the
+Landwasser river. Previous site studies suggest that the site has a <img class="math" src="_images/math/0a29ebb5d14b1693a555dd5ef444951d35db396c.png" alt="V_{s30} = 242\,\textrm{m/s}"/>. We denote with
+<img class="math" src="_images/math/b6ea2bf8d0cf07d17f2ec891c10435a44893766c.png" alt="V_{s30}"/> the average velocity of shear waves in the superficial 30 meters.</p>
+<p>This site is representative of a common situation where we have a single very strong contrast.
+For most stations, H/V ratios depicted below with red lines exhibit a clear peak around 1.5 Hz
+and a trough at 2.5 Hz. However, we observe that for some stations located at the edge of the basin
+the resonance frequency is shifted to higher values. In the same figure, the Rayleigh wave ellipticity
+(blue line) retrieved from the array allows us to pinpoint very clearly the location of the trough. We
+used all the available stations for the retrieval of the ellipticity angle using the array, disregarding the
+fact that some stations exhibit different H/V. We expect the ellipticity retrieved from the array to be
+representative of the average structure of the site.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><div class="align-center figure align-default" id="id23" style="width: 90%">
+<a class="reference internal image-reference" href="_images/RayleighWaves_R0_Wavenumber_B1.png"><img alt="Wavenumber R0" src="_images/RayleighWaves_R0_Wavenumber_B1.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 14 </span><span class="caption-text">Rayleigh wave wavenumber, fundamental mode.</span><a class="headerlink" href="#id23" title="Permalink to this image">¶</a></p>
+</div>
+</td>
+<td><div class="align-center figure align-default" id="id24" style="width: 85%">
+<a class="reference internal image-reference" href="_images/RayleighWaves_R0_EllipticityAngle1.png"><img alt="Ellipticty angle R0" src="_images/RayleighWaves_R0_EllipticityAngle1.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 15 </span><span class="caption-text">Rayleigh wave ellipticty angle, fundamental mode.</span><a class="headerlink" href="#id24" title="Permalink to this image">¶</a></p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The figures above depict the estimated wavenumber and ellipticity angle from the array recording. The
+dispersion curve is picked until just below 2 Hz due to the lower resolution limit. The ellipticity angle
+shows prograde particle motion between the lower frequency limit and the singularity at 2.5 Hz. At
+2.5 Hz the particle motion is vertically polarized, above this frequency the ellipticity angle is constant
+and the particle motion is retrograde.</p>
+<div class="align-center figure" id="id25" style="width: 40%">
+<a class="reference internal image-reference" href="_images/HV1.png"><img alt="Rayleigh wave Ellipticity and H/V ratio" src="_images/HV1.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 16 </span><span class="caption-text">Comparison of H/V ratios (red lines) and ellipticity angle (blue lines, two modes).</span><a class="headerlink" href="#id25" title="Permalink to this image">¶</a></p>
+</div>
+<p>We now consider the ellipticity retrieved from the array and the average H/V ratio, shown in
+The figure above. At low frequencies, the ellipticity is limited by the resolution of the array and does not allow
+us to identify accurately the fundamental frequency of the site. On the right flank of the peak, there
+is a discrepancy between the H/V ratio and the array ellipticity. The H/V ratio exhibits larger values
+than the array ellipticity and this could be explained by the presence of Love waves in the wavefield.
+As discussed in the previous sections, WaveDec models the presence of Love waves and thus reduces
+their impact on the estimated ellipticity. The trough at 2.5 Hz is very clearly identified looking at the
+array ellipticity but it is not as easily identified from H/V ratios. One reason could be that the presence
+of Love waves in the wavefield augments the energy on the horizontal components and thus increases
+the value of the H/V ratio.</p>
+</div>
+<div class="section" id="zurich-airport-sklw-passive">
+<h3><a class="toc-backref" href="#contents">Zurich Airport (SKLW) - Passive</a><a class="headerlink" href="#zurich-airport-sklw-passive" title="Permalink to this headline">¶</a></h3>
+<p>The site <a class="reference external" href="http://stations.seismo.ethz.ch/opencms8/opencms/seddb/station_information_public/station_given_networkcode_and_stationcode.html?networkcode=CH&amp;stationcode=SKLW">SKLW</a> in Kloten, Canton of Zurich is located on a large glacial gravel terrace in a wide, but
+shallow basin. The array is located in close vicinity of the airport of Zurich.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><div class="align-center figure align-default" id="id26" style="width: 90%">
+<a class="reference internal image-reference" href="_images/RayleighWaves_R0_Wavenumber_B2.png"><img alt="Wavenumber R0" src="_images/RayleighWaves_R0_Wavenumber_B2.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 17 </span><span class="caption-text">Rayleigh wave wavenumber, fundamental mode.</span><a class="headerlink" href="#id26" title="Permalink to this image">¶</a></p>
+</div>
+</td>
+<td><div class="align-center figure align-default" id="id27" style="width: 85%">
+<a class="reference internal image-reference" href="_images/RayleighWaves_R0_EllipticityAngle2.png"><img alt="Ellipticty angle R0" src="_images/RayleighWaves_R0_EllipticityAngle2.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 18 </span><span class="caption-text">Rayleigh wave ellipticty angle, fundamental mode.</span><a class="headerlink" href="#id27" title="Permalink to this image">¶</a></p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Wavenumber and ellipticity angle estimates for the fundamental mode are shown in Figs. 7c
+and 7d, respectively. The ellipticity angle of the fundamental mode exhibits a common pattern from
+prograde above the resonance frequency to retrograde at higher frequencies.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><div class="align-center figure align-default" id="id28" style="width: 90%">
+<a class="reference internal image-reference" href="_images/RayleighWaves_R1_Wavenumber_B1.png"><img alt="Wavenumber R1" src="_images/RayleighWaves_R1_Wavenumber_B1.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 19 </span><span class="caption-text">Rayleigh wave wavenumber, fundamental mode.</span><a class="headerlink" href="#id28" title="Permalink to this image">¶</a></p>
+</div>
+</td>
+<td><div class="align-center figure align-default" id="id29" style="width: 85%">
+<a class="reference internal image-reference" href="_images/RayleighWaves_R1_EllipticityAngle1.png"><img alt="Ellipticty angle R1" src="_images/RayleighWaves_R1_EllipticityAngle1.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 20 </span><span class="caption-text">Rayleigh wave ellipticty angle, fundamental mode.</span><a class="headerlink" href="#id29" title="Permalink to this image">¶</a></p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Wavenumber and ellipticity angle estimates for the first higher mode are shown in Figs. 7e and 7f,
+respectively. The ellipticity angle of the first higher mode indicates prograde particle motion over the
+entire frequency range. At about 9 Hz the wave is almost horizontally polarized, above this frequency,
+the value of the ellipticity angle decreases slightly.</p>
+<div class="align-center figure" id="id30" style="width: 40%">
+<a class="reference internal image-reference" href="_images/HV2.png"><img alt="Rayleigh wave Ellipticity and H/V ratio" src="_images/HV2.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 21 </span><span class="caption-text">Comparison of H/V ratios (red lines) and ellipticity angle (blue lines, two modes).</span><a class="headerlink" href="#id30" title="Permalink to this image">¶</a></p>
+</div>
+<p>In this figure the H/V ratios are compared with the ellipticity of two modes. Peak and trough of the
+H/V ratios are not very clearly identified, possibly due to the lack of a strong contrast. On the contrary,
+the WaveDec ellipticity angle information allows us to pinpoint the trough very accurately.</p>
+</div>
+<div class="section" id="zurich-airport-sklw-active">
+<h3><a class="toc-backref" href="#contents">Zurich Airport (SKLW) - Active</a><a class="headerlink" href="#zurich-airport-sklw-active" title="Permalink to this headline">¶</a></h3>
+<p>With an active source in the proximity of the array, we employ the wave equations <a class="reference internal" href="#equation-rayleighwavecircular">(5)</a>. We are able to retrieve dispersion curve at higher frequencies, complementing the information retrieved with the passive survey.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To be completed.
+This section pertains to the work presented in <a class="reference internal" href="references.html#marano-et-al-2017b" id="id8"><span>[Maranò_et_al_2017b]</span></a>.</p>
+</div>
+</div>
+<div class="section" id="baar-sbas">
+<h3><a class="toc-backref" href="#contents">Baar (SBAS)</a><a class="headerlink" href="#baar-sbas" title="Permalink to this headline">¶</a></h3>
+<p>The site <a class="reference external" href="http://stations.seismo.ethz.ch/opencms8/opencms/seddb/station_information_public/station_given_networkcode_and_stationcode.html?networkcode=CH&amp;stationcode=SBAS">SBAS</a> in Baar, Canton of Zug lies on the alluvial cone of the Lorze river, about 2.5 km
+from the mouth of the river in Lake Zug. The underground geology consists of gravel, sand, and silt.
+Previous site studies determined <img class="math" src="_images/math/0abd1a1a042c948f8100c45c6221db273ecb030c.png" alt="V_{s30} = 203\,\textrm{m/s}"/>.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><div class="align-center figure align-default" id="id31" style="width: 90%">
+<a class="reference internal image-reference" href="_images/RayleighWaves_R0_Wavenumber_B3.png"><img alt="Wavenumber R0" src="_images/RayleighWaves_R0_Wavenumber_B3.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 22 </span><span class="caption-text">Rayleigh wave wavenumber, fundamental mode.</span><a class="headerlink" href="#id31" title="Permalink to this image">¶</a></p>
+</div>
+</td>
+<td><div class="align-center figure align-default" id="id32" style="width: 85%">
+<a class="reference internal image-reference" href="_images/RayleighWaves_R0_EllipticityAngle3.png"><img alt="Ellipticty angle R0" src="_images/RayleighWaves_R0_EllipticityAngle3.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 23 </span><span class="caption-text">Rayleigh wave ellipticty angle, fundamental mode.</span><a class="headerlink" href="#id32" title="Permalink to this image">¶</a></p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The figure on the left shows wavenumber estimates with the picked fundamental mode of the Rayleigh wave.
+The figure on the right depicts the corresponding ellipticity angle estimates are shown. Rayleigh wave ellipticity
+exhibits several singularities where the particle motion switches from prograde to retrograde or viceversa. The particle motion is prograde until 2.5 Hz, where the polarization is purely vertical. Until
+3.5 Hz the particle motion is retrograde. At 3.5 Hz, the particle motion is purely horizontal. From
+3.5 Hz until just above 6 Hz the motion is prograde and finally changes to retrograde one last time.</p>
+<div class="align-center figure" id="id33" style="width: 40%">
+<a class="reference internal image-reference" href="_images/HV3.png"><img alt="Rayleigh wave Ellipticity and H/V ratio" src="_images/HV3.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 24 </span><span class="caption-text">Comparison of H/V ratios (red lines) and ellipticity angle (blue line).</span><a class="headerlink" href="#id33" title="Permalink to this image">¶</a></p>
+</div>
+<p>The H/V ratio curves shown above exhibit multiple peaks and troughs. The peak above 1 Hz identifies
+the fundamental frequency of the site and the other peak, just above 3.5 Hz, witnesses the presence
+of another shallower contrast. The ellipticity of the fundamental mode of the Rayleigh wave shows a
+good agreement with the H/V ratios. The trough at 2.5 Hz is identified at the same frequency from
+both H/V and ellipticity. The peak around 3-4 Hz is also found with both methods, with a minor
+discrepancy. For the second trough, around 6-7 Hz, there is a discrepancy between H/V ratios and ellipticity.
+We observe that the H/V curves are quite different in this frequency range, possibly reflecting
+inhomogeneities of the subsurface. The array ellipticity is probably most representative of the average
+structure below the array. We remark that the ellipticity curve allows to pinpoint much more clearly
+the frequency of the singularities with respect to the H/V ratio.</p>
+<p>Despite the many singularities observed at this site, usingWaveDec it is possible to easily identify
+the dispersion curve over a broad frequency range. This would not be possible when modelling the
+vertical and the radial component separately. In fact, we observed that using the method proposed
+in Poggi &amp; Fäh (2010) there is a lack of energy on the vertical (radial) component when the Rayleigh
+wave is horizontally (vertically) polarized.</p>
+</div>
+<div class="section" id="rayleigh-wave-ellipticity-at-different-sites">
+<span id="secellipticitysites"></span><h3><a class="toc-backref" href="#contents">Rayleigh wave ellipticity at different sites</a><a class="headerlink" href="#rayleigh-wave-ellipticity-at-different-sites" title="Permalink to this headline">¶</a></h3>
+<p>A quick comparison of ellipticity angle curves retrieved at selected sites. All the curves refer to the fundamental mode of the Rayleigh wave. More details and discussion are found in <a class="reference internal" href="references.html#marano-et-al-2017a" id="id9"><span>[Maranò_et_al_2017a]</span></a>.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><div class="align-center figure align-default" id="id34" style="width: 90%">
+<a class="reference internal image-reference" href="_images/SDAK_RayleighWaves_R0_EllipticityAngle.png"><img alt="Ellipticty angle R0" src="_images/SDAK_RayleighWaves_R0_EllipticityAngle.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 25 </span><span class="caption-text">Single interface, Davos (SDAK).</span><a class="headerlink" href="#id34" title="Permalink to this image">¶</a></p>
+</div>
+</td>
+<td><div class="align-center figure align-default" id="id35" style="width: 85%">
+<a class="reference internal image-reference" href="_images/SBAS_RayleighWaves_R0_EllipticityAngle.png"><img alt="Ellipticty angle R0" src="_images/SBAS_RayleighWaves_R0_EllipticityAngle.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 26 </span><span class="caption-text">Two contrasts, Baar (SBAS).</span><a class="headerlink" href="#id35" title="Permalink to this image">¶</a></p>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><div class="align-center figure align-default" id="id36" style="width: 90%">
+<a class="reference internal image-reference" href="_images/SBAK_RayleighWaves_R0_EllipticityAngle.png"><img alt="Ellipticty angle R0" src="_images/SBAK_RayleighWaves_R0_EllipticityAngle.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 27 </span><span class="caption-text">Gradient, Basel Klybeck (SBAK).</span><a class="headerlink" href="#id36" title="Permalink to this image">¶</a></p>
+</div>
+</td>
+<td><div class="align-center figure align-default" id="id37" style="width: 85%">
+<a class="reference internal image-reference" href="_images/SCUG_RayleighWaves_R0_EllipticityAngle.png"><img alt="Ellipticty angle R0" src="_images/SCUG_RayleighWaves_R0_EllipticityAngle.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 28 </span><span class="caption-text">Rock site, Chur (SCUG).</span><a class="headerlink" href="#id37" title="Permalink to this image">¶</a></p>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Scientist’s Documentation</a><ul>
+<li><a class="reference internal" href="#signal-model">Signal model</a><ul>
+<li><a class="reference internal" href="#love-wave">Love wave</a></li>
+<li><a class="reference internal" href="#rayleigh-wave">Rayleigh wave</a><ul>
+<li><a class="reference internal" href="#rayleigh-wave-with-circular-wavefront">Rayleigh wave with circular wavefront</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#relationship-between-classical-h-v-ellipticity-and-ellipticity-angle">Relationship Between Classical H/V Ellipticity and Ellipticity Angle</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#overview-of-the-wavedec-method">Overview of the WaveDec method</a><ul>
+<li><a class="reference internal" href="#measurement-model">Measurement model</a></li>
+<li><a class="reference internal" href="#maximum-likelihood-estimation">Maximum likelihood estimation</a></li>
+<li><a class="reference internal" href="#model-selection">Model selection</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#example-applications">Example applications</a><ul>
+<li><a class="reference internal" href="#sesame-m2-1">SESAME M2.1</a><ul>
+<li><a class="reference internal" href="#benefit-of-joint-modeling-rayleigh-and-love-waves">Benefit of joint modeling Rayleigh and Love waves</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#davos-sdak">Davos (SDAK)</a></li>
+<li><a class="reference internal" href="#zurich-airport-sklw-passive">Zurich Airport (SKLW) - Passive</a></li>
+<li><a class="reference internal" href="#zurich-airport-sklw-active">Zurich Airport (SKLW) - Active</a></li>
+<li><a class="reference internal" href="#baar-sbas">Baar (SBAS)</a></li>
+<li><a class="reference internal" href="#rayleigh-wave-ellipticity-at-different-sites">Rayleigh wave ellipticity at different sites</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">WaveDec: a tool for wavefield decomposition</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="faq.html"
+                        title="next chapter">Frequently asked questions (FAQ)</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="faq.html" title="Frequently asked questions (FAQ)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="WaveDec: a tool for wavefield decomposition"
+             >previous</a> |</li>
+<li><a href="https://github.com/StefanoMarano">Home</a> &#187; <a href="index.html">WaveDec  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      Last updated on Apr 26, 2020.
+    <br>
+        &copy; Copyright 202, Stefano Maranò.
+<!-- <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png"/></a>-->
+ This documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ?
+"https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost +
+"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4477781-2");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+  </body>
+</html>

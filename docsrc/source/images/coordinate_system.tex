@@ -1,0 +1,33 @@
+\begin{tikzpicture}
+  \def\px{1.4}
+  \def\py{2.3}
+  \newdimen\xcoX\xcoX=-0.72cm
+  \newdimen\xcoY\xcoY=-0.5cm
+  \newdimen\ycoX\ycoX=0.9cm
+  \newdimen\ycoY\ycoY=-0.3cm
+  \newdimen\zcoX\zcoX=0cm
+  \newdimen\zcoY\zcoY=1cm
+  \begin{scope}[x={(\xcoX,\xcoY)},y={(\ycoX,\ycoY)},z={(\zcoX,\zcoY)}]
+    \coordinate (o) at (0,0,0);
+    \coordinate[circle,draw,fill=gray,inner sep=0.8mm] (p) at (\px,\py,0);
+    \coordinate (px) at (\px,0,0);
+    \coordinate (py) at (0,\py,0);
+    \coordinate (pz) at (0,0,0);
+    \coordinate (pxy) at (\px,\py,0);
+    \draw[->] (o) -- (3,0,0) node[above] {$x$};
+    \draw[->] (o) -- (0,3,0) node[above] {$y$};
+    \draw[->] (o) -- (0,0,2) node[right] {$z$};
+    \draw[help lines] (px) -- (pxy);
+    \draw[help lines] (py) -- (pxy);
+    \draw[help lines] (o) -- (pxy);
+    \draw[very thick] (o) -- (p) node[below right] {$\ve p$};
+    \draw[->,>=latex'] (1.2,0,0) arc[radius=1.2,start angle=0,
+    end angle=atan(\py/\px)];
+    \node at (0.7,0.4,0) {$\psi$};
+  \end{scope}
+\end{tikzpicture}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "../../SMCRDFHL_v0116"
+%%% End: 

@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Frequently asked questions (FAQ) &#8212; WaveDec  documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="prev" title="Scientist’s Documentation" href="scientific.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scientific.html" title="Scientist’s Documentation"
+             accesskey="P">previous</a> |</li>
+<li><a href="https://github.com/StefanoMarano">Home</a> &#187; <a href="index.html">WaveDec  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="frequently-asked-questions-faq">
+<h1>Frequently asked questions (FAQ)<a class="headerlink" href="#frequently-asked-questions-faq" title="Permalink to this headline">¶</a></h1>
+<p>Here are some frequently asked questions. If you have any additional question, please do not hesitate to write us <img class="math" src="_images/math/4b6097f9cf82b4a75798195afc1f5b4cb22aff42.png" alt="\textrm{wavedec&#64;gmail.com}"/>.</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#what-are-the-main-advantages-of-wavedec-and-wavedecactive" id="id1">What are the main advantages of WaveDec and WaveDecActive?</a></p></li>
+<li><p><a class="reference internal" href="#what-are-the-limitations-of-wavedec" id="id2">What are the limitations of WaveDec?</a></p></li>
+<li><p><a class="reference internal" href="#what-are-the-limitations-of-wavedecactive" id="id3">What are the limitations of WaveDecActive?</a></p></li>
+<li><p><a class="reference internal" href="#why-the-analysed-frequencies-are-not-what-i-expected" id="id4">Why the analysed frequencies are not what I expected?</a></p></li>
+</ul>
+</div>
+<div class="section" id="what-are-the-main-advantages-of-wavedec-and-wavedecactive">
+<h2><a class="toc-backref" href="#contents">What are the main advantages of WaveDec and WaveDecActive?</a><a class="headerlink" href="#what-are-the-main-advantages-of-wavedec-and-wavedecactive" title="Permalink to this headline">¶</a></h2>
+<p>WaveDec and WaveDecActive implement a rigorous approach to parameter estimation. The algorithm implements a maximum likelihood method using the measurements from all sensors and components jointly.</p>
+<p>The estimated Rayleigh wave ellipticity angle is a valuable observable which –to the best of our knowledge– is not retrieved with any other software. See <a class="reference internal" href="scientific.html#secrelationship"><span class="std std-ref">here</span></a> for theory, see <a class="reference internal" href="scientific.html#secellipticitysites"><span class="std std-ref">here</span></a>  for practical examples.</p>
+<p>WaveDec also accounts for the simultaneous presence of multiple waves. This is important and improves the accuracy of the estimated parameters. See <a class="reference internal" href="scientific.html#secjointmodeling"><span class="std std-ref">here</span></a> for an example.</p>
+</div>
+<div class="section" id="what-are-the-limitations-of-wavedec">
+<h2><a class="toc-backref" href="#contents">What are the limitations of WaveDec?</a><a class="headerlink" href="#what-are-the-limitations-of-wavedec" title="Permalink to this headline">¶</a></h2>
+<p>WaveDec has been tested extensively and retrieved successfully wave parameters in a variety of situations.</p>
+<p>One important consideration is the assumption of planar wavefronts. As for many other array processing and beamforming methods, WaveDec models plane waves. This assumption requires the sources to be located far outside the array and an underlying 1-dimensional structural model.</p>
+<p>For a given array, the planar wavefront model may be valid at certain frequencies (or wavelengths) and may not be valid at higher frequencies (or shorter wavelengths),</p>
+<p>If you wish to model a source located close to the array or even within the array, you need to account for circular wavefronts and amplitude decay. WaveDecActive can do that, see <a class="reference internal" href="userguide_WaveDecActive.html"><span class="doc">User’s guide: WaveDecActive</span></a>.</p>
+</div>
+<div class="section" id="what-are-the-limitations-of-wavedecactive">
+<h2><a class="toc-backref" href="#contents">What are the limitations of WaveDecActive?</a><a class="headerlink" href="#what-are-the-limitations-of-wavedecactive" title="Permalink to this headline">¶</a></h2>
+<p>We believe that a good coupling of the sensors to the ground is critical for WaveDecActive. Since WaveDecActive models the three components jointly, it is important that both the vertical component and the horizontal components are properly coupled to the ground. This appears to be especially critical at high frequencies.</p>
+</div>
+<div class="section" id="why-the-analysed-frequencies-are-not-what-i-expected">
+<h2><a class="toc-backref" href="#contents">Why the analysed frequencies are not what I expected?</a><a class="headerlink" href="#why-the-analysed-frequencies-are-not-what-i-expected" title="Permalink to this headline">¶</a></h2>
+<p>In the <a class="reference internal" href="userguide_WaveDec.html#wavedecconfigurationfile"><span class="std std-ref">configuration file</span></a> it is possible to specify the frequencies to process:</p>
+<blockquote>
+<div><div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">Fmin</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>      <span class="c1"># Smallest frequency to analyse, in Hertz. Default is &lt;10/Twindow&gt;</span>
+<span class="nt">Fmax</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">10</span>       <span class="c1"># Largest frequency to analyse, in Hertz. Default is &lt;min(20, 0.5/Ts)&gt;</span>
+<span class="nt">Fspacing</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">lin</span>  <span class="c1"># Linear &lt;lin&gt; or logarithmic &lt;log&gt; frequency spacing. Default is &lt;lin&gt;</span>
+<span class="nt">Fnum</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">11</span>       <span class="c1"># Number of frequencies, between Fmin and Fmax, to be analysed.</span>
+               <span class="c1"># Default is &lt;50&gt;. Set Fnum: 0 to model all DFT frequencies.</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Using the parameters shown above, one expects to process the frequencies <img class="math" src="_images/math/f1e0e9f1577f36f6b5554f5133c25382666af802.png" alt="1,2,3,\ldots,10"/> Hz. However, this may not be true and depends on the sampling time read in the input SAC files or specified by the optional parameter <code class="docutils literal notranslate"><span class="pre">Ts</span></code>.</p>
+<p>WaveDec only processes discrete Fourier transform (DFT) frequencies (that is, the frequencies of <code class="docutils literal notranslate"><span class="pre">fft()</span></code>). WaveDec will analyse the DFT frequencies that are closest to what is specified by the user in the configuration file.</p>
+<p>If you wish to have a dense and uniform frequency spacing, set <code class="docutils literal notranslate"><span class="pre">Fnum:</span> <span class="pre">0</span></code>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Frequently asked questions (FAQ)</a><ul>
+<li><a class="reference internal" href="#what-are-the-main-advantages-of-wavedec-and-wavedecactive">What are the main advantages of WaveDec and WaveDecActive?</a></li>
+<li><a class="reference internal" href="#what-are-the-limitations-of-wavedec">What are the limitations of WaveDec?</a></li>
+<li><a class="reference internal" href="#what-are-the-limitations-of-wavedecactive">What are the limitations of WaveDecActive?</a></li>
+<li><a class="reference internal" href="#why-the-analysed-frequencies-are-not-what-i-expected">Why the analysed frequencies are not what I expected?</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="scientific.html"
+                        title="previous chapter">Scientist’s Documentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="next chapter">Installation</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scientific.html" title="Scientist’s Documentation"
+             >previous</a> |</li>
+<li><a href="https://github.com/StefanoMarano">Home</a> &#187; <a href="index.html">WaveDec  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      Last updated on Apr 26, 2020.
+    <br>
+        &copy; Copyright 202, Stefano Maranò.
+<!-- <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png"/></a>-->
+ This documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ?
+"https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost +
+"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4477781-2");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+  </body>
+</html>
