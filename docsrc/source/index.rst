@@ -35,15 +35,16 @@ The algorithm was developed at the `Swiss Seismological Service <http://www.seis
 Download
 ========
 
-* `Download WaveDec and WaveDecActive code <http://mercalli.ethz.ch/~marra/WaveDec/WaveDec.zip>`__
-* `Download examples and documentation for WaveDec and WaveDecActive <http://mercalli.ethz.ch/~marra/WaveDec/WaveDec_examples.zip>`__
+* Download the code for WaveDec and WaveDecActive from the GitHub repository `github.com/StefanoMarano/WaveDec <https://github.com/StefanoMarano/WaveDec>`__
+* Documentation and examples are available in these pagese.
 
-The software is available upon request. Please send an email to :math:`\textrm{wavedec@gmail.com}` to obtain download credentials.
+For any questions related to the software, feel free to email me: :math:`\textrm{wavedec@gmail.com}`.
 
 Usage of the software is limited to non-commercial use (that is, educational and research purposes). If you use the software in your work, please acknowledge us, see :ref:`howtociteus`.
 
 Last Changes
 ============
+* 26/4/2020: GitHub repository and documentation are online
 * 15/7/2017: Created a new page: :doc:`faq`.
 * 15/6/2017: Updated the examples concerning rotational motions, see Section :ref:`Plane waves (translational and rotational motions) <Examples6C>`.
 * 29/5/2017: Following the acceptance for publication of our article `"Analysis of Rayleigh Waves with Circular Wavefront: a Maximum Likelihood Approach" <https://doi.org/10.1093/gji/ggx225>`__, the code WaveDecActive.py is released in the main distribution together with WaveDec.py.
