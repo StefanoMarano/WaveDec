@@ -5,13 +5,6 @@ Installation
 This page describes the steps necessary to install WaveDec.
 
 
-Requirements
-############
-
-WaveDec needs the Python interpreter, version 3, and few additional Python packages.
-
-If you wish :doc:`wdPicker <userguide_wdPicker>` to produce plots with Latex fonts, you will need to configure Latex environment appropriately.
-
 Download
 ########
 
@@ -20,6 +13,13 @@ The code can be cloned from the `repository <https://github.com/StefanoMarano/Wa
   git clone https://github.com/StefanoMarano/WaveDec.git
 
 or downloaded as `ZIP archive <https://github.com/StefanoMarano/WaveDec/archive/master.zip>`__.
+
+Requirements
+############
+
+WaveDec needs the Python interpreter, version 3, and few additional Python packages.
+
+If you wish :doc:`wdPicker <userguide_wdPicker>` to produce plots with Latex fonts, you will need to configure Latex environment appropriately.
 
 
 GNU/Linux (Ubuntu >14.04)
@@ -76,16 +76,6 @@ Other platforms
   * Install recent versions of Numpy, Scipy, and Matplotlib. See installation of the full ScipPy stack `here <http://www.scipy.org/install.html/>`__.
 
   * Install `YAML <http://pyyaml.org>`_ and any other missing package.
-
-
-Download
-########
-
-* Download the WaveDec files in a compressed ZIP archive from one of the following links.
-
-* `Download WaveDec <http://mercalli.ethz.ch/~marra/WaveDec/WaveDec.zip>`_
-* `Download WaveDec and WaveDecActive <http://mercalli.ethz.ch/~marra/WaveDec/WaveDecActive.zip>`_
-* `Download WaveDec and WaveDecActive without documentation <http://mercalli.ethz.ch/~marra/WaveDec/WaveDecActive_nodoc.zip>`_
 
 
 Installation
