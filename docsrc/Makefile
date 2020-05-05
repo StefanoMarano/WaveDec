@@ -51,6 +51,7 @@ github:
 	@cp -a build/html/. ../docs
 	@echo
 	@echo "Build finished. HTML pages copied to github docs folder"
+
 pdf:
 	$(SPHINXBUILD) -b pdf $(ALLSPHINXOPTS) $(BUILDDIR)/pdf
 	@echo 

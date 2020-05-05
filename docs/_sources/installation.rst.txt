@@ -12,6 +12,16 @@ WaveDec needs the Python interpreter, version 3, and few additional Python packa
 
 If you wish :doc:`wdPicker <userguide_wdPicker>` to produce plots with Latex fonts, you will need to configure Latex environment appropriately.
 
+Download
+########
+
+The code can be cloned from the `repository <https://github.com/StefanoMarano/WaveDec>`__ ::
+
+  git clone https://github.com/StefanoMarano/WaveDec.git
+
+or downloaded as `ZIP archive <https://github.com/StefanoMarano/WaveDec/archive/master.zip>`__.
+
+
 GNU/Linux (Ubuntu >14.04)
 *************************
 
