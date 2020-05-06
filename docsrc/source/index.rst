@@ -35,10 +35,13 @@ The algorithm was developed at the `Swiss Seismological Service <http://www.seis
 Download
 ========
 
-* Download the code for WaveDec and WaveDecActive from the GitHub repository `github.com/StefanoMarano/WaveDec <https://github.com/StefanoMarano/WaveDec>`__
-* Documentation and examples are available in these pagese.
+The code can be cloned from the GitHub repository `github.com/StefanoMarano/WaveDec <https://github.com/StefanoMarano/WaveDec>`__ ::
 
-For any questions related to the software, feel free to email me: :math:`\textrm{wavedec@gmail.com}`.
+  git clone https://github.com/StefanoMarano/WaveDec.git
+
+or downloaded as `ZIP archive <https://github.com/StefanoMarano/WaveDec/archive/master.zip>`__.
+
+Documentation and examples are available in these pages. For any questions related to the software, feel free to email me: :math:`\textrm{wavedec@gmail.com}`.
 
 Usage of the software is limited to non-commercial use (that is, educational and research purposes). If you use the software in your work, please acknowledge us, see :ref:`howtociteus`.
 
