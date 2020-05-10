@@ -90,17 +90,20 @@ MODEL_CIRCULAR_DISSIPATIVE_RAYLEIGH=7;
 
 # the dictionary maps channel descriptor (as found, for example, in SAC file header)
 # to the values used internally by this software
-Components = {    'E':EWX,    'N':NSY,    'Z':UDZ,
-                'EWX':EWX,  'NSY':NSY,  'UDZ':UDZ,
-                'ROTX':ROTX,'ROTY':ROTY,'ROTZ':ROTZ,
-                'RX':ROTX,'RY':ROTY,'RZ':ROTZ,
-                 b'E':EWX,   b'N':NSY,   b'Z':UDZ,
-               b'EWX':EWX, b'NSY':NSY, b'UDZ':UDZ,
+Components = {    'E':EWX,    'N':NSY,    'Z':UDZ, b'E':EWX,   b'N':NSY,   b'Z':UDZ,
+                'EWX':EWX,  'NSY':NSY,  'UDZ':UDZ, b'EWX':EWX, b'NSY':NSY, b'UDZ':UDZ,
+                'ROTX':ROTX,'ROTY':ROTY,'ROTZ':ROTZ, b'ROTX':ROTX, b'ROTY':ROTY, b'ROTZ':ROTZ,
+                'RX':ROTX,'RY':ROTY,'RZ':ROTZ, b'RX':ROTX,   b'RY':ROTY,   b'RZ':ROTZ,
                b'BHE':EWX, b'BHN':NSY, b'BHZ':UDZ,
                b'EHE':EWX, b'EHN':NSY, b'EHZ':UDZ,   # EH short period
-               b'EH1':UDZ, b'EH2':NSY, b'EH3':EWX,   # Numbers should be used whenever the aligment is not known
+               b'EH1':UDZ, b'EH2':NSY, b'EH3':EWX,   # Numbers are used whenever the aligment is not known
                b'EH4':UDZ, b'EH5':NSY, b'EH6':EWX,   
                # # b'EH1':EWX, b'EH2':NSY, b'EHZ':UDZ, # Clashes with one line above! Used for borehole sensors. But X and Y are not actually known.
                b'HGE':EWX, b'HGN':NSY, b'HGZ':UDZ,
-               b'HHE':EWX, b'HHN':NSY, b'HHZ':UDZ # Broadband
-                }
+               b'HHE':EWX, b'HHN':NSY, b'HHZ':UDZ, # Broadband
+               b'HJZ':UDZ, b'HJN':NSY, b'HJE':EWX, # Rotational sensor XJX
+               b'BJZ':UDZ, b'BJN':NSY, b'BJE':EWX,
+               b'EJZ':UDZ, b'EJN':NSY, b'EJE':EWX,
+               b'HJ1':UDZ, b'HJ2':NSY, b'HJ3':EWX,
+               b'HJZ':UDZ, b'HJY':NSY, b'HJX ':EWX
+               }

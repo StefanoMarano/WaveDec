@@ -74,8 +74,8 @@ def decomposeWavefield(conn, y, WindowId, Ts, Fvec_ndx, Kmax, Kstep, Estep, Vmin
     F=shape(Sm_bw)[2]
     
     
-    NumK = 2*ceil(Kmax/Kstep) # number of points in the wavenumber search grid. Even, so that we do not have 0 in the final search grid
-    NumE = ceil(np.pi/Estep) # number of points in the ellipticity search grid Even, so that we have 0 in the final search grid
+    NumK = np.int(2*ceil(Kmax/Kstep)) # number of points in the wavenumber search grid. Even, so that we do not have 0 in the final search grid
+    NumE = np.int(ceil(np.pi/Estep)) # number of points in the ellipticity search grid Even, so that we have 0 in the final search grid
     Wavenumber_x = linspace(-Kmax, Kmax, NumK)
     Wavenumber_y = linspace(-Kmax, Kmax, NumK)
     EllipticityAngle = linspace(-pi/2, pi/2, NumE, endpoint=False)

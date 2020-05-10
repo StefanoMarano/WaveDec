@@ -23,7 +23,7 @@ from SyntheticWavefield import readSyntheticWavefield
 from ReadSAC import readSacDir
 import DataUtils as db
 
-from wdSettings import MODEL_NOISE, MODEL_VERTICAL, MODEL_RAYLEIGH, MODEL_LOVE, MODEL_CIRCULAR_VERTICAL, MODEL_CIRCULAR_RAYLEIGH
+from wdSettings import MODEL_NOISE, MODEL_VERTICAL, MODEL_RAYLEIGH, MODEL_LOVE, MODEL_CIRCULAR_VERTICAL, MODEL_CIRCULAR_RAYLEIGH, MODEL_CIRCULAR_DISSIPATIVE_RAYLEIGH
 from wdSettings import EWX, NSY, UDZ, ROTX, ROTY, ROTZ, WD_C_1, WD_C_2
 
 def main():
@@ -250,7 +250,7 @@ def main():
     
     WavesToModel = {MODEL_RAYLEIGH:ModelRayleighWaves, MODEL_LOVE:ModelLoveWaves,
                     MODEL_NOISE:ModelNoise, MODEL_VERTICAL:ModelVerticalWaves,
-                    MODEL_CIRCULAR_RAYLEIGH:False, MODEL_CIRCULAR_VERTICAL:False}
+                    MODEL_CIRCULAR_RAYLEIGH:False, MODEL_CIRCULAR_VERTICAL:False, MODEL_CIRCULAR_DISSIPATIVE_RAYLEIGH:False}
     
     
     # change below for plotting traces
