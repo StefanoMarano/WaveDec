@@ -21,7 +21,7 @@ def readSyntheticWavefield(config_file):
 
     try:
         with open(config_file) as f:
-            conf = yaml.load(f)
+            conf = yaml.load(f, Loader=yaml.FullLoader)
             f.close()
     except Exception as e:
         logging.critical(e)

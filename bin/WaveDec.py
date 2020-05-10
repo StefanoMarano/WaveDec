@@ -59,8 +59,9 @@ def main():
     CONFIG_FILE = os.path.abspath(args.config_file)    # default is "./config.yaml"
     try:
         with open(CONFIG_FILE) as f:
-            conf = yaml.load(f)
+            conf = yaml.load(f, Loader=yaml.FullLoader)
             f.close()
+            
     except yaml.scanner.ScannerError as e:
         logging.critical('There is a syntax problem with the YAML configuration file {0}.'.format(CONFIG_FILE))
         logging.critical(e)
