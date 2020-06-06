@@ -101,9 +101,9 @@ Components = {    'E':EWX,    'N':NSY,    'Z':UDZ, b'E':EWX,   b'N':NSY,   b'Z':
                # # b'EH1':EWX, b'EH2':NSY, b'EHZ':UDZ, # Clashes with one line above! Used for borehole sensors. But X and Y are not actually known.
                b'HGE':EWX, b'HGN':NSY, b'HGZ':UDZ,
                b'HHE':EWX, b'HHN':NSY, b'HHZ':UDZ, # Broadband
-               b'HJZ':UDZ, b'HJN':NSY, b'HJE':EWX, # Rotational sensor XJX
-               b'BJZ':UDZ, b'BJN':NSY, b'BJE':EWX,
-               b'EJZ':UDZ, b'EJN':NSY, b'EJE':EWX,
-               b'HJ1':UDZ, b'HJ2':NSY, b'HJ3':EWX,
-               b'HJZ':UDZ, b'HJY':NSY, b'HJX ':EWX
+               b'HJZ':ROTZ, b'HJN':ROTY, b'HJE':ROTX, # Rotational sensor XJX
+               b'BJZ':ROTZ, b'BJN':ROTY, b'BJE':ROTX,
+               b'EJZ':ROTZ, b'EJN':ROTY, b'EJE':ROTX,
+               b'HJ1':ROTZ, b'HJ2':ROTY, b'HJ3':ROTX,
+                            b'HJY':ROTY, b'HJX ':ROTX
                }
